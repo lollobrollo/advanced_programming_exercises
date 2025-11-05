@@ -10,5 +10,12 @@ class SparseMatrixCOO: public SparseMatrix {
     vector<double> values;
     vector<uint> rows;
     vector<uint> cols;
+
+  public:
+    SparseMatrixCOO(const uint nrows, const uint ncols); // constructor
+    SparseMatrixCOO(const SparseMatrix& other); // copy constructor
+    SparseMatrixCOO& operator=(const SparseMatrix& other); // copy assignment
+    ~SparseMatrixCOO(); // destructor
+
 }
 
