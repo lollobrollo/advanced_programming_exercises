@@ -3,6 +3,8 @@
 #include "sparse.hpp"
 #include <vector>
 
+typedef unsigned int uint;
+
 class SparseMatrixCSR: public SparseMatrix {
   private:
     const uint nrows;
