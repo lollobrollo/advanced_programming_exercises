@@ -9,7 +9,24 @@ class SparseMatrixCSR: public SparseMatrix {
   private:
     const uint nrows;
     const uint ncols;
-    vector<double> values;
-    vector<uint> cols;
-    vector<uint> row_idx;
-}
+    std::vector<double> values;
+    std::vector<uint> cols;
+    std::vector<uint> row_idx;
+
+  public:
+    SparseMatrixCSR(const uint nrows, const uint ncols); // constructor
+    SparseMatrixCSR(const SparseMatrixCSR& other); // copy constructor
+    SparseMatrixCSR& operator=(const SparseMatrixCSR& other); // copy assignment
+    ~SparseMatrixCSR(); // destructor
+
+    const double& operator()(const uint row, const uint col) const override; // read only (for const objects)
+    double& operator()(const uint row, const uint col) override; // write access (for non const objects)
+    SparseMatrix operator*(const SparseMatrix& vec) const override; // dot product
+    SparseMatrix operator*(const std::vector<double>& vec) const override; // dot product
+    const uint get_nrows() const override;
+    const uint get_ncols() const override;
+    const uint get_nonzeros() const override;
+
+
+    friend std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat);
+};
