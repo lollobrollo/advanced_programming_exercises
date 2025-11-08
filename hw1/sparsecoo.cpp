@@ -1,21 +1,24 @@
 /*
-Used documentation about vecctor methods from this link:
+consulted sites:
 https://en.cppreference.com/w/cpp/container/vector.html
-
-static keyword details:
 https://www.geeksforgeeks.org/cpp/static-keyword-cpp/
+https://en.cppreference.com/w/cpp/utility/tuple.html
 
 TODO:
 - in copy constructor, compare reserve() followed by push_back() with resize() followed by at()
+
+
+- i expect that elements are ordered during insertion (row and column indexes-wise)
 */
 
 
-#include "sparsecoo.hpp"
 #include <iostream>
 #include <ostream>
 #include <vector>
+#include "sparsecoo.hpp"
 
 typedef unsigned int uint;
+
 
 const uint SparseMatrixCOO::get_nrows() const {
     return this->nrows;
@@ -26,7 +29,7 @@ const uint SparseMatrixCOO::get_ncols() const {
 };
 
 const uint SparseMatrixCOO::get_nonzeros() const {
-    return this->values.size();
+    return this->entries.size();
 };
 
 // Parametrized constructor
@@ -36,18 +39,12 @@ SparseMatrixCOO::SparseMatrixCOO(const uint nrows, const uint ncols) : nrows(nro
 
 // Copy constructor
 SparseMatrixCOO::SparseMatrixCOO(const SparseMatrixCOO& other) : nrows(other.nrows), ncols(other.ncols) {
-    if(!other.values.empty()) {
-        const uint num_elems = other.get_nonzeros();
-        this->values.reserve(num_elems);
-        this->rows.reserve(num_elems);
-        this->cols.reserve(num_elems);
-
-        for(uint idx = 0 ; idx < num_elems; ++idx) {
-          this->values.push_back(other.values.at(idx));
-          this->rows.push_back(other.rows.at(idx));
-          this->cols.push_back(other.cols.at(idx));
-        }
-    }
+  if(!other.entries.empty()) {
+    this->entries.reserve(other.entries.size());
+    for(const MyTuple& entry : other.entries) {
+      this->entries.push_back(entry);
+    };
+  };
 };
 
 // Copy assignment operator
@@ -57,22 +54,16 @@ SparseMatrixCOO& SparseMatrixCOO::operator=(const SparseMatrixCOO& other) {
     return *this;
   };
 
-  const uint num_elems = other.get_nonzeros();
-  this->values.reserve(num_elems);
-  this->rows.reserve(num_elems);
-  this->cols.reserve(num_elems);
- 
-  for(uint idx = 0 ; idx < num_elems; ++idx) {
-      this->values.push_back(other.values.at(idx));
-      this->rows.push_back(other.rows.at(idx));
-      this->cols.push_back(other.cols.at(idx));
+  if(this != other) {
+  this->entries.clear();
+  this->entries.reserve(other.entries.size());
+  for(const MyTuple& entry : other.entries) { this->entries.push_back(entry); };
   };
-
   return *this;
 };
 
-// Destructor: not needed, vectors take care of their own memory
-SparseMatrixCOO::~SparseMatrixCOO() = default; 
+// Destructor
+SparseMatrixCOO::~SparseMatrixCOO() = default;
 
 // Read-only access to elements
 const double& SparseMatrixCOO::operator()(const uint row, const uint col) const {
@@ -86,13 +77,13 @@ const double& SparseMatrixCOO::operator()(const uint row, const uint col) const 
   };
 
   if(!(found == num_elems +1)) {
-    return this->values.at(found);
+    return this->entries.at(found);
   } else {
     static const double zero = 0.0;
     return zero;
   };
 };
-/*
+
 // Access to matrix elements, editing allowed
 double& SparseMatrixCOO::operator()(const uint row, const uint col) {
   
@@ -107,13 +98,13 @@ SparseMatrixCOO SparseMatrixCOO::operator*(const SparseMatrixCOO& vec) const {
 SparseMatrixCOO SparseMatrixCOO::operator*(const std::vector<double>& vec) const {
   
 };
-*/
+
 // print to standard output
 std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat) {
   os << "SparseMatrixCOO (" << mat.nrows << " x " << mat.ncols << ")\n";
-  for (size_t idx = 0; idx < mat.values.size(); ++idx) {
+  for (size_t idx = 0; idx < mat.entries.size(); ++idx) {
     os << "(" << mat.rows.at(idx) << ", " << mat.cols.at(idx)
-       << "): " << mat.values.at(idx) << '\n';
+       << "): " << mat.entries.at(idx) << '\n';
   };
   return os;
 };

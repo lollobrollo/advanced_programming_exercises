@@ -3,6 +3,7 @@
 #include "sparse.hpp"
 #include <vector>
 #include <ostream>
+#include <tuple>
 
 typedef unsigned int uint;
 
@@ -10,9 +11,7 @@ class SparseMatrixCOO: public SparseMatrix {
   private:
     const uint nrows;
     const uint ncols;
-    std::vector<double> values;
-    std::vector<uint> rows;
-    std::vector<uint> cols;
+    std::vector<double> entries; // vector of MyTuple elements
 
   public:
     SparseMatrixCOO(const uint nrows, const uint ncols); // constructor
@@ -28,7 +27,18 @@ class SparseMatrixCOO: public SparseMatrix {
     const uint get_ncols() const override;
     const uint get_nonzeros() const override;
 
-
+    friend class MtTuple;
     friend std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat);
 };
 
+// Class used to save values associated with corresponding row and column coordinates
+class MyTuple {
+  private:
+    std::tuple<uint, uint, double> mat_entry; // row, colum, value
+    SparseMatrix& mat;
+
+  public:
+    MyTuple(uint row, uint col, double val, SparseMatrixCOO& mat);
+    MyTuple(const MyTuple& other); // copy constructor (invoked by vector.push_back(MyTuole&))
+    MyTuple& operator=(const MyTuple& other); // copy assignment 
+};
