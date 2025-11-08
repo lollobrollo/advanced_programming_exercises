@@ -17,15 +17,15 @@ TODO:
 
 typedef unsigned int uint;
 
-const uint SparseMatrixCOO::get_nrows() const {
+uint SparseMatrixCOO::get_nrows() const {
     return this->nrows;
 };
 
-const uint SparseMatrixCOO::get_ncols() const {
+uint SparseMatrixCOO::get_ncols() const {
     return this->ncols;
 };
 
-const uint SparseMatrixCOO::get_nonzeros() const {
+uint SparseMatrixCOO::get_nonzeros() const {
     return this->values.size();
 };
 
@@ -92,22 +92,22 @@ const double& SparseMatrixCOO::operator()(const uint row, const uint col) const 
     return zero;
   };
 };
-/*
+
 // Access to matrix elements, editing allowed
 double& SparseMatrixCOO::operator()(const uint row, const uint col) {
-  
+  throw std::logic_error("Error: Write access operator not yet implemented.\n");
 };
 
 // Dot product among sparse matrices
-SparseMatrixCOO SparseMatrixCOO::operator*(const SparseMatrixCOO& vec) const {
-
+SparseMatrixCOO& SparseMatrixCOO::operator*(const SparseMatrix& vec) const {
+  throw std::logic_error("Error: Dot product operator not yet implemented.\n");
 };
 
 // Dot product, sparse matrix and vector
-SparseMatrixCOO SparseMatrixCOO::operator*(const std::vector<double>& vec) const {
-  
+SparseMatrixCOO& SparseMatrixCOO::operator*(const std::vector<double>& vec) const {
+  throw std::logic_error("Error: Dot product operator not yet implemented.\n");
 };
-*/
+
 // print to standard output
 std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat) {
   os << "SparseMatrixCOO (" << mat.nrows << " x " << mat.ncols << ")\n";
