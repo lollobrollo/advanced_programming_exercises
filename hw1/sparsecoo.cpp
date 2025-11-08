@@ -11,6 +11,7 @@ TODO:
 
 
 #include "sparsecoo.hpp"
+#include "transientmatrixelement.hpp"
 #include <iostream>
 #include <ostream>
 #include <vector>
@@ -75,7 +76,7 @@ SparseMatrixCOO& SparseMatrixCOO::operator=(const SparseMatrixCOO& other) {
 SparseMatrixCOO::~SparseMatrixCOO() = default; 
 
 // Read-only access to elements
-const double& SparseMatrixCOO::operator()(const uint row, const uint col) const {
+double SparseMatrixCOO::operator()(const uint row, const uint col) const {
   uint num_elems = this->get_nonzeros();
   uint found = num_elems + 1;
   for(uint idx = 0; idx < num_elems; ++idx ) {
@@ -85,17 +86,40 @@ const double& SparseMatrixCOO::operator()(const uint row, const uint col) const 
     };
   };
 
-  if(!(found == num_elems +1)) {
-    return this->values.at(found);
-  } else {
-    static const double zero = 0.0;
-    return zero;
-  };
+  return (found < num_elems +1) ? this->values.at(found) : 0.0;
 };
 
 // Access to matrix elements, editing allowed
-double& SparseMatrixCOO::operator()(const uint row, const uint col) {
-  throw std::logic_error("Error: Write access operator not yet implemented.\n");
+TransientMatrixElement SparseMatrixCOO::operator()(const uint row, const uint col) {
+  return TransientMatrixElement(row, col, *this);
+};
+
+void SparseMatrixCOO::setValue(const uint row, const uint col, const double value) {
+  uint num_elems = this->get_nonzeros();
+  uint found = num_elems + 1;
+  for(uint idx = 0; idx < num_elems; ++idx ) {
+    if((this->rows.at(idx) == row) && (this->cols.at(idx) == col)) {
+      found = idx;
+      break;
+    };
+  };
+
+  if(found < num_elems +1) {
+    if(value != 0.0) {
+      this->values.at(found) = value;
+    } else {
+      // Remove the element
+      this->values.erase(this->values.begin() + found);
+      this->rows.erase(this->rows.begin() + found);
+      this->cols.erase(this->cols.begin() + found);
+    };
+  } else {
+    if(value != 0.0) {
+      this->values.push_back(value);
+      this->rows.push_back(row);
+      this->cols.push_back(col);
+    };
+  };
 };
 
 // Dot product among sparse matrices

@@ -1,4 +1,5 @@
 #include "sparsecsr.hpp"
+#include "transientmatrixelement.hpp"
 #include <iostream>
 
 uint SparseMatrixCSR::get_nrows() const {
@@ -38,7 +39,7 @@ SparseMatrixCSR::~SparseMatrixCSR() {
     // No dynamic memory to free
 };
 
-const double& SparseMatrixCSR::operator()(const uint row, const uint col) const {
+double SparseMatrixCSR::operator()(const uint row, const uint col) const {
     // Find the row in the row_idx vector
     auto row_start = this->row_idx.at(row);
     auto row_end = this->row_idx.at(row + 1);
@@ -50,12 +51,14 @@ const double& SparseMatrixCSR::operator()(const uint row, const uint col) const 
         }
     }
 
-    // If not found, return a reference to a static zero
-    static const double zero = 0.0;
-    return zero;
+    return 0.0;
 }
 
-double& SparseMatrixCSR::operator()(const uint row, const uint col) {
+TransientMatrixElement SparseMatrixCSR::operator()(const uint row, const uint col) {
+    return TransientMatrixElement(row, col, *this);
+};
+
+void SparseMatrixCSR::setValue(const uint row, const uint col, const double value) {
     // Find the row in the row_idx vector
     auto row_start = this->row_idx.at(row);
     auto row_end = this->row_idx.at(row + 1);
@@ -63,13 +66,32 @@ double& SparseMatrixCSR::operator()(const uint row, const uint col) {
     // Search for the column in the current row's range
     for (auto i = row_start; i < row_end; ++i) {
         if (this->cols.at(i) == col) {
-            return this->values.at(i);
+            if (value != 0.0) {
+                this->values.at(i) = value; // Update existing value
+            } else {
+                // Remove the element
+                this->values.erase(this->values.begin() + i);
+                this->cols.erase(this->cols.begin() + i);
+                // Update row_idx
+                for (auto j = row + 1; j < this->row_idx.size(); ++j) {
+                    this->row_idx.at(j)--;
+                }
+            }
+            return;
         }
     }
 
-    // If not found, we cannot return a reference to a non-existent element
-    throw std::out_of_range("Element not found in sparse matrix.");
-};
+    // If we reach here, the element does not exist
+    if (value != 0.0) {
+        // Insert new element
+        this->values.insert(this->values.begin() + row_end, value);
+        this->cols.insert(this->cols.begin() + row_end, col);
+        // Update row_idx
+        for (auto j = row + 1; j < this->row_idx.size(); ++j) {
+            this->row_idx.at(j)++;
+        }
+    }
+}
 
 SparseMatrixCSR& SparseMatrixCSR::operator*(const SparseMatrix& vec) const {
     // Placeholder implementation

@@ -11,9 +11,9 @@ add_compile_options(-Wall -Wextra -Wpedantic)
 # Source files
 set(SOURCES
   main.cpp
-  sparse.cpp
   sparsecoo.cpp
   sparsecsr.cpp
+  transientmatrixelement.cpp
 )
 
 add_executable(hw1 ${SOURCES})

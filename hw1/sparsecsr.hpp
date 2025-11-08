@@ -1,6 +1,7 @@
 #pragma once
 
 #include "sparse.hpp"
+#include "transientmatrixelement.hpp"
 #include <vector>
 #include <ostream>
 
@@ -20,8 +21,9 @@ class SparseMatrixCSR: public SparseMatrix {
     SparseMatrixCSR& operator=(const SparseMatrixCSR& other); // copy assignment
     ~SparseMatrixCSR(); // destructor
 
-    const double& operator()(const uint row, const uint col) const override; // read only (for const objects)
-    double& operator()(const uint row, const uint col) override; // write access (for non const objects)
+    double operator()(const uint row, const uint col) const override; // read only (for const objects)
+    TransientMatrixElement operator()(const uint row, const uint col) override; // write access (for non const objects)
+    void setValue(const uint row, const uint col, const double value) override;
     SparseMatrixCSR& operator*(const SparseMatrix& vec) const override; // dot product
     SparseMatrixCSR& operator*(const std::vector<double>& vec) const override; // dot product
     uint get_nrows() const override;
