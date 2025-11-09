@@ -11,6 +11,7 @@ TODO:
 
 
 #include "sparsecoo.hpp"
+#include "sparsecsr.hpp"
 #include "transientmatrixelement.hpp"
 #include <iostream>
 #include <ostream>
@@ -50,6 +51,23 @@ SparseMatrixCOO::SparseMatrixCOO(const SparseMatrixCOO& other) : nrows(other.nro
         }
     }
 };
+
+// Copy constructor from CSR
+SparseMatrixCOO::SparseMatrixCOO(const SparseMatrixCSR& other) : nrows(other.get_nrows()), ncols(other.get_ncols()) {
+    // Convert CSR to COO
+    this->values.clear();
+    this->rows.clear();
+    this->cols.clear();
+    for (uint row = 0; row < other.nrows; ++row) {
+        uint row_start = other.row_idx.at(row);
+        uint row_end = other.row_idx.at(row + 1);
+        for (uint idx = row_start; idx < row_end; ++idx) {
+            this->values.push_back(other.values.at(idx));
+            this->rows.push_back(row);
+            this->cols.push_back(other.cols.at(idx));
+        }
+    }
+}
 
 // Copy assignment operator
 SparseMatrixCOO& SparseMatrixCOO::operator=(const SparseMatrixCOO& other) {

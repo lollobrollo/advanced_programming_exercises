@@ -30,5 +30,21 @@ int main() {
     csr(9,9) = 15.5; // Out of bounds assignment
     
 
+    coo(0, 0) = 1.0;
+    coo(2, 2) = 4.0;
+    std::cout << "Updated SparseMatrixCOO:\n" << coo;
+
+    csr(0, 1) = 2.71;
+    csr(1, 2) = 1.61;
+    std::cout << "Updated SparseMatrixCSR:\n" << csr;
+
+    SparseMatrixCOO coo_from_csr = csr;
+    std::cout << "Converted SparseMatrixCSR to SparseMatrixCOO.\n";
+    std::cout << coo_from_csr;
+
+    SparseMatrixCSR csr_from_coo = coo;
+    std::cout << "Converted SparseMatrixCOO to SparseMatrixCSR.\n";
+    std::cout << csr_from_coo;
+
     return 0;
 }

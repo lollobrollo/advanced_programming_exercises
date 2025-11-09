@@ -1,4 +1,5 @@
 #include "sparsecsr.hpp"
+#include "sparsecoo.hpp"
 #include "transientmatrixelement.hpp"
 #include <iostream>
 
@@ -15,10 +16,26 @@ uint SparseMatrixCSR::get_nonzeros() const {
 };
 
 // Parametrized constructor
-SparseMatrixCSR::SparseMatrixCSR(const uint nrows, const uint ncols) : nrows(nrows), ncols(ncols) {};
+SparseMatrixCSR::SparseMatrixCSR(const uint nrows, const uint ncols) : nrows(nrows), ncols(ncols) {
+    this->row_idx = std::vector<uint>(nrows + 1, 0);
+    std::cout << "Empty matrix of dimensions " << this->nrows << " x " << this->ncols << " initialized.\n";
+};
 
 // Copy constructor
 SparseMatrixCSR::SparseMatrixCSR(const SparseMatrixCSR& other) : nrows(other.nrows), ncols(other.ncols), values(other.values), cols(other.cols), row_idx(other.row_idx) {};
+
+// Copy constructor from COO
+SparseMatrixCSR::SparseMatrixCSR(const SparseMatrixCOO& other) : nrows(other.get_nrows()), ncols(other.get_ncols()) {
+    // Convert COO to CSR
+    this->values.clear();
+    this->cols.clear();
+    this->row_idx = std::vector<uint>(nrows + 1, 0);
+
+    // Fill values and cols
+    for (size_t i = 0; i < other.values.size(); ++i) {
+        this->setValue(other.rows.at(i), other.cols.at(i), other.values.at(i));
+    }
+}
 
 // Copy assignment
 SparseMatrixCSR& SparseMatrixCSR::operator=(const SparseMatrixCSR& other) {
@@ -66,6 +83,8 @@ TransientMatrixElement SparseMatrixCSR::operator()(const uint row, const uint co
 };
 
 void SparseMatrixCSR::setValue(const uint row, const uint col, const double value) {
+    if (row >= nrows || col >= ncols) throw std::out_of_range("index");
+
     // Find the row in the row_idx vector
     auto row_start = this->row_idx.at(row);
     auto row_end = this->row_idx.at(row + 1);
