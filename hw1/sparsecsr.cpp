@@ -93,12 +93,12 @@ void SparseMatrixCSR::setValue(const uint row, const uint col, const double valu
     }
 }
 
-SparseMatrixCSR& SparseMatrixCSR::operator*(const SparseMatrix& vec) const {
-    // Placeholder implementation
-    throw std::logic_error("SparseMatrix multiplication not implemented yet.");
-}
+// SparseMatrixCSR SparseMatrixCSR::operator*(const SparseMatrixCSR& vec) const {
+//     // Placeholder implementation
+//     throw std::logic_error("SparseMatrix multiplication not implemented yet.");
+// }
 
-SparseMatrixCSR& SparseMatrixCSR::operator*(const std::vector<double>& vec) const {
+std::vector<double> SparseMatrixCSR::operator*(const std::vector<double>& vec) const {
     // Placeholder implementation
     throw std::logic_error("SparseMatrix and vector multiplication not implemented yet.");
 }

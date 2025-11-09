@@ -122,14 +122,36 @@ void SparseMatrixCOO::setValue(const uint row, const uint col, const double valu
   };
 };
 
-// Dot product among sparse matrices
-SparseMatrixCOO& SparseMatrixCOO::operator*(const SparseMatrix& vec) const {
-  throw std::logic_error("Error: Dot product operator not yet implemented.\n");
-};
+// // Dot product among sparse matrices
+// SparseMatrixCOO& SparseMatrixCOO::operator*(const SparseMatrix& other) const {
+//   if(!(this->ncols == other.nrows)) {
+//    std::cout << "Error: sizes of matrices do not match.\n";
+//   return this;
+//   };
 
-// Dot product, sparse matrix and vector
-SparseMatrixCOO& SparseMatrixCOO::operator*(const std::vector<double>& vec) const {
-  throw std::logic_error("Error: Dot product operator not yet implemented.\n");
+//   SparseMatrixCOO result(this->nrows, other->ncols);
+//   for(uint i = 0; i < this->values.size(); ++i) {
+//     for(uint j = 0; j < other.values.size(); ++j) {
+//       if(this->cols.at(i) == other.rows.at(j)) {
+//         result(this->rows.at(i), other.cols.at(j)) += this->values.at(i) * other.values.at(i);
+//       };
+//     };
+//   };
+//   return result;
+// };
+
+// Dot product, sparse matrix and vector+
+std::vector<double> SparseMatrixCOO::operator*(const std::vector<double>& vec) const {
+  if(!(this->nrows == vec.size())) {
+    std::cout << "Error: sizes of matrix and vector do not match.\n";
+    return vec;
+  };
+
+  std::vector<double> result(this->nrows, 0.0); // skipped rows are defaulted to 0.0
+  for(uint idx = 0; idx < this->values.size(); ++idx) {
+    result.at(this->rows.at(idx)) += this->values.at(idx) * vec.at(idx);
+  };
+  return result;
 };
 
 // print to standard output

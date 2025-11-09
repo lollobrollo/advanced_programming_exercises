@@ -24,8 +24,8 @@ class SparseMatrixCOO: public SparseMatrix {
     double operator()(const uint row, const uint col) const override; // read only (for const objects)
     TransientMatrixElement operator()(const uint row, const uint col) override; // write access (for non const objects)
     void setValue(const uint row, const uint col, const double value) override;
-    SparseMatrixCOO& operator*(const SparseMatrix& vec) const override; // dot product
-    SparseMatrixCOO& operator*(const std::vector<double>& vec) const override; // dot product
+    //SparseMatrixCOO& operator*(const SparseMatrix& vec) const override; // dot product
+    std::vector<double> operator*(const std::vector<double>& vec) const override; // dot product
     uint get_nrows() const override;
     uint get_ncols() const override;
     uint get_nonzeros() const override;
