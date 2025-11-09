@@ -98,25 +98,35 @@ void SparseMatrixCSR::setValue(const uint row, const uint col, const double valu
 //     throw std::logic_error("SparseMatrix multiplication not implemented yet.");
 // }
 
+
 std::vector<double> SparseMatrixCSR::operator*(const std::vector<double>& vec) const {
-    // Placeholder implementation
-    throw std::logic_error("SparseMatrix and vector multiplication not implemented yet.");
-}
+    std::vector<double> results(this->nrows, 0.0);
+
+    for (uint row = 0; row < nrows; ++row) {
+        uint row_start = row_idx.at(row);
+        uint row_end = row_idx.at(row + 1);
+        for (uint idx = row_start; idx < row_end; ++idx) {
+            results.at(row) += values.at(idx) * vec.at(this->cols.at(idx));
+        };
+    };
+
+    return results;
+};
 
 std::ostream& operator<<(std::ostream& os, const SparseMatrixCSR& mat) {
     os << "SparseMatrixCSR(" << mat.nrows << "x" << mat.ncols << ") with " << mat.get_nonzeros() << " non-zero elements.\n";
     os << "Values: ";
     for (const auto& val : mat.values) {
         os << val << " ";
-    }
+    };
     os << "\nColumns: ";
     for (const auto& col : mat.cols) {
         os << col << " ";
-    }
+    };
     os << "\nRow indices: ";
     for (const auto& idx : mat.row_idx) {
         os << idx << " ";
-    }
+    };
     os << "\n";
     return os;
 };
