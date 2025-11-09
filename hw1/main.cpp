@@ -27,9 +27,6 @@ int main() {
     std::cout << "Dot product, matrix * vector computed:\n[" << res.at(0) <<
     ", " << res.at(1) << ", " << res.at(2) << "]\n";
 
-    csr(9,9) = 15.5; // Out of bounds assignment
-    
-
     coo(0, 0) = 1.0;
     coo(2, 2) = 4.0;
     std::cout << "Updated SparseMatrixCOO:\n" << coo;
@@ -45,6 +42,8 @@ int main() {
     SparseMatrixCSR csr_from_coo = coo;
     std::cout << "Converted SparseMatrixCOO to SparseMatrixCSR.\n";
     std::cout << csr_from_coo;
+
+    csr(9,9) = 15.5; // Out of bounds assignment
 
     return 0;
 }
