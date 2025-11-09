@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <vector>
+#include <memory>
 #include "sparsecoo.hpp"
 #include "sparsecsr.hpp"
 
@@ -29,21 +30,28 @@ int main() {
 
     coo(0, 0) = 1.0;
     coo(2, 2) = 4.0;
-    std::cout << "Updated SparseMatrixCOO:\n" << coo;
+    std::cout << "\nUpdated SparseMatrixCOO:\n" << coo;
 
     csr(0, 1) = 2.71;
     csr(1, 2) = 1.61;
-    std::cout << "Updated SparseMatrixCSR:\n" << csr;
+    std::cout << "\nUpdated SparseMatrixCSR:\n" << csr;
 
     SparseMatrixCOO<double> coo_from_csr = csr;
-    std::cout << "Converted SparseMatrixCSR to SparseMatrixCOO.\n";
+    std::cout << "\nConverted SparseMatrixCSR to SparseMatrixCOO.\n";
     std::cout << coo_from_csr;
 
     SparseMatrixCSR<double> csr_from_coo = coo;
-    std::cout << "Converted SparseMatrixCOO to SparseMatrixCSR.\n";
+    std::cout << "\nConverted SparseMatrixCOO to SparseMatrixCSR.\n";
     std::cout << csr_from_coo;
 
-    csr(9,9) = 15.5; // Out of bounds assignment
+    auto coo_t_ptr = coo.transpose();
+    // delucidations on dynamic cast:
+    // https://www.en.cppreference.com/w/cpp/language/dynamic_cast.html
+    // https://stackoverflow.com/questions/13783312/how-does-dynamic-cast-work
+    auto coo_t_ptr2 = dynamic_cast<SparseMatrixCOO<double>*>(coo_t_ptr.get());
+    std::cout << "Original coo matrix:\n" << coo <<"\nTransposed coo matrix:\n" << *coo_t_ptr2 <<"\n";
+
+    csr(9,9) = 15.5; // Out of bounds assignment, we expect it to be caught by our methods
 
     return 0;
 }
