@@ -31,6 +31,7 @@ template <typename T> class SparseMatrixCOO: public SparseMatrix<T> {
     TransientMatrixElement<T> operator()(const uint row, const uint col) override; // write access (for non const objects)
     //SparseMatrixCOO& operator*(const SparseMatrix& vec) const override; // dot product
     std::vector<T> operator*(const std::vector<T>& vec) const override; // dot product
+    SparseMatrix<T>& transpose() const override;
     uint get_nrows() const override;
     uint get_ncols() const override;
     uint get_nonzeros() const override;

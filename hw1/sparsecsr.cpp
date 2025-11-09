@@ -157,6 +157,37 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const SparseMat
     return os;
 };
 
+template <typename T> SparseMatrix<T>& SparseMatrixCSR<T>::transpose() const {
+    SparseMatrixCSR<T> t(this->ncols, this->nrows);
+
+    // Count elements per column
+    std::vector<uint> col_counts(this->ncols, 0);
+    for (auto c : this->cols) {
+        col_counts[c]++;
+    };
+
+    // Build t.row_idx with a cumulative sum
+    t.row_idx.resize(this->ncols + 1, 0);
+    for (uint i = 0; i < this->ncols; ++i) {
+        t.row_idx[i + 1] = t.row_idx[i] + col_counts[i];
+    };
+
+    t.values.resize(this->values.size());
+    t.cols.resize(this->values.size());
+
+    // Build t.cols and t.values
+    std::vector<uint> next_free = t.row_idx; // used to point to next slot to be filled
+    for (uint row = 0; row < this->nrows; ++row) { // for every row of starting matrix
+        for (uint idx = this->row_idx[row]; idx < this->row_idx[row + 1]; ++idx) { // for every position of elements in that row
+            uint c = this->cols[idx]; // get pre-transpose column
+            uint dest = next_free[c]++; // get post-transpose destination (row) and then increment it for the next iteration
+            t.values[dest] = this->values[idx];
+            t.cols[dest] = row; // new column becomes previous row
+        };
+    };
+    return t;
+}
+
 // Explicit template instantiation
 template class SparseMatrixCSR<double>;
 template std::ostream& operator<<(std::ostream& os, const SparseMatrixCSR<double>& mat);

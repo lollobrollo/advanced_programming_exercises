@@ -191,6 +191,21 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const SparseMat
   return os;
 };
 
+template <typename T> SparseMatrix<T>& SparseMatrixCOO<T>::transpose() const {
+    SparseMatrixCOO<T> t(this->ncols, this->nrows); // Create a new object to be returned
+    t.values.reserve(this->values.size());
+    t.rows.reserve(this->rows.size());
+    t.cols.reserve(this->cols.size());
+
+    for (size_t i = 0; i < this->values.size(); ++i) {
+      // Copy values as is, swap indexes of rows and columns
+      t.values.push_back(this->values[i]);
+      t.rows.push_back(this->cols[i]);
+      t.cols.push_back(this->rows[i]);
+    };
+    return t;
+};
+
 // Explicit template instantiation
 template class SparseMatrixCOO<double>;
 template std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO<double>& mat);

@@ -17,6 +17,7 @@ template <typename T> class SparseMatrix {
     virtual TransientMatrixElement<T> operator()(const uint row, const uint col) = 0; // write access (for non const objects)
     // virtual SparseMatrix& operator*(const SparseMatrix& vec) const = 0; // dot product
     virtual std::vector<T> operator*(const std::vector<T>& vec) const = 0; // dot product
+    virtual SparseMatrix<T>& transpose() const = 0;
     virtual uint get_nrows() const = 0;
     virtual uint get_ncols() const = 0;
     virtual uint get_nonzeros() const = 0;
