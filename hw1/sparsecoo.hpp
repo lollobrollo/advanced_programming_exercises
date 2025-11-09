@@ -7,36 +7,36 @@
 
 typedef unsigned int uint;
 
-class SparseMatrixCSR; // forward declaration
+template<typename T> class SparseMatrixCSR; // forward declaration
 
-class SparseMatrixCOO: public SparseMatrix {
+template <typename T> class SparseMatrixCOO: public SparseMatrix<T> {
   private:
     const uint nrows;
     const uint ncols;
-    std::vector<double> values;
+    std::vector<T> values;
     std::vector<uint> rows;
     std::vector<uint> cols;
     
   protected:
-    void setValue(const uint row, const uint col, const double value) override;
+    void setValue(const uint row, const uint col, const T value) override;
 
   public:
     SparseMatrixCOO(const uint nrows, const uint ncols); // constructor
-    SparseMatrixCOO(const SparseMatrixCOO& other); // copy constructor
-    SparseMatrixCOO(const SparseMatrixCSR& other); // copy constructor
-    SparseMatrixCOO& operator=(const SparseMatrixCOO& other); // copy assignment
+    SparseMatrixCOO(const SparseMatrixCOO<T>& other); // copy constructor
+    SparseMatrixCOO(const SparseMatrixCSR<T>& other); // copy constructor
+    SparseMatrixCOO<T>& operator=(const SparseMatrixCOO<T>& other); // copy assignment
     ~SparseMatrixCOO(); // destructor
   
-    double operator()(const uint row, const uint col) const override; // read only (for const objects)
-    TransientMatrixElement operator()(const uint row, const uint col) override; // write access (for non const objects)
+    T operator()(const uint row, const uint col) const override; // read only (for const objects)
+    TransientMatrixElement<T> operator()(const uint row, const uint col) override; // write access (for non const objects)
     //SparseMatrixCOO& operator*(const SparseMatrix& vec) const override; // dot product
-    std::vector<double> operator*(const std::vector<double>& vec) const override; // dot product
+    std::vector<T> operator*(const std::vector<T>& vec) const override; // dot product
     uint get_nrows() const override;
     uint get_ncols() const override;
     uint get_nonzeros() const override;
 
-    friend std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat);
+    template<typename U> friend std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO<U>& mat);
 
-    friend class SparseMatrixCSR;
+    friend class SparseMatrixCSR<T>;
 };
 

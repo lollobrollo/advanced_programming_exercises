@@ -3,29 +3,29 @@
 #include "transientmatrixelement.hpp"
 #include <iostream>
 
-uint SparseMatrixCSR::get_nrows() const {
+template <typename T> uint SparseMatrixCSR<T>::get_nrows() const {
     return this->nrows;
 };
 
-uint SparseMatrixCSR::get_ncols() const {
+template <typename T> uint SparseMatrixCSR<T>::get_ncols() const {
     return this->ncols;
 };
 
-uint SparseMatrixCSR::get_nonzeros() const {
+template <typename T> uint SparseMatrixCSR<T>::get_nonzeros() const {
     return this->values.size();
 };
 
 // Parametrized constructor
-SparseMatrixCSR::SparseMatrixCSR(const uint nrows, const uint ncols) : nrows(nrows), ncols(ncols) {
+template <typename T> SparseMatrixCSR<T>::SparseMatrixCSR(const uint nrows, const uint ncols) : nrows(nrows), ncols(ncols) {
     this->row_idx = std::vector<uint>(nrows + 1, 0);
     std::cout << "Empty matrix of dimensions " << this->nrows << " x " << this->ncols << " initialized.\n";
 };
 
 // Copy constructor
-SparseMatrixCSR::SparseMatrixCSR(const SparseMatrixCSR& other) : nrows(other.nrows), ncols(other.ncols), values(other.values), cols(other.cols), row_idx(other.row_idx) {};
+template <typename T> SparseMatrixCSR<T>::SparseMatrixCSR(const SparseMatrixCSR<T>& other) : nrows(other.nrows), ncols(other.ncols), values(other.values), cols(other.cols), row_idx(other.row_idx) {};
 
 // Copy constructor from COO
-SparseMatrixCSR::SparseMatrixCSR(const SparseMatrixCOO& other) : nrows(other.get_nrows()), ncols(other.get_ncols()) {
+template <typename T> SparseMatrixCSR<T>::SparseMatrixCSR(const SparseMatrixCOO<T>& other) : nrows(other.get_nrows()), ncols(other.get_ncols()) {
     // Convert COO to CSR
     this->values.clear();
     this->cols.clear();
@@ -38,7 +38,7 @@ SparseMatrixCSR::SparseMatrixCSR(const SparseMatrixCOO& other) : nrows(other.get
 }
 
 // Copy assignment
-SparseMatrixCSR& SparseMatrixCSR::operator=(const SparseMatrixCSR& other) {
+template <typename T> SparseMatrixCSR<T>& SparseMatrixCSR<T>::operator=(const SparseMatrixCSR<T>& other) {
     if(!(this->nrows == other.nrows) || !(this->ncols == other.ncols)) {
         std::cout << "Error: Matrices have conflicting sizes, assignment avoided.\n";
         return *this;
@@ -52,11 +52,11 @@ SparseMatrixCSR& SparseMatrixCSR::operator=(const SparseMatrixCSR& other) {
 };
 
 // Destructor
-SparseMatrixCSR::~SparseMatrixCSR() {
+template <typename T> SparseMatrixCSR<T>::~SparseMatrixCSR() {
     // No dynamic memory to free
 };
 
-double SparseMatrixCSR::operator()(const uint row, const uint col) const {
+template <typename T> T SparseMatrixCSR<T>::operator()(const uint row, const uint col) const {
     if((row >= this->nrows) || (col >= this->ncols)) {
         std::cout << "Error: assigning value out of matrix bounds. Assignment avoided.\n";
         return 0.0;
@@ -75,14 +75,14 @@ double SparseMatrixCSR::operator()(const uint row, const uint col) const {
     return 0.0; // Element not found, returning default
 }
 
-TransientMatrixElement SparseMatrixCSR::operator()(const uint row, const uint col) {
+template <typename T> TransientMatrixElement<T> SparseMatrixCSR<T>::operator()(const uint row, const uint col) {
     if((row >= this->nrows) || (col >= this->ncols)) {
         throw std::out_of_range("Matrix indices out of bounds");
     }
-    return TransientMatrixElement(row, col, *this);
+    return TransientMatrixElement<T>(row, col, *this);
 };
 
-void SparseMatrixCSR::setValue(const uint row, const uint col, const double value) {
+template <typename T> void SparseMatrixCSR<T>::setValue(const uint row, const uint col, const T value) {
     if (row >= nrows || col >= ncols) throw std::out_of_range("index");
 
     // Find the row in the row_idx vector
@@ -125,8 +125,8 @@ void SparseMatrixCSR::setValue(const uint row, const uint col, const double valu
 // }
 
 
-std::vector<double> SparseMatrixCSR::operator*(const std::vector<double>& vec) const {
-    std::vector<double> results(this->nrows, 0.0);
+template <typename T> std::vector<T> SparseMatrixCSR<T>::operator*(const std::vector<T>& vec) const {
+    std::vector<T> results(this->nrows, 0.0);
 
     for (uint row = 0; row < nrows; ++row) { // compute one at a time (row by row)
         uint row_start = row_idx.at(row);
@@ -139,7 +139,7 @@ std::vector<double> SparseMatrixCSR::operator*(const std::vector<double>& vec) c
     return results;
 };
 
-std::ostream& operator<<(std::ostream& os, const SparseMatrixCSR& mat) {
+template <typename T> std::ostream& operator<<(std::ostream& os, const SparseMatrixCSR<T>& mat) {
     os << "SparseMatrixCSR(" << mat.nrows << "x" << mat.ncols << ") with " << mat.get_nonzeros() << " non-zero elements.\n";
     os << "Values: ";
     for (const auto& val : mat.values) {
@@ -156,3 +156,7 @@ std::ostream& operator<<(std::ostream& os, const SparseMatrixCSR& mat) {
     os << "\n";
     return os;
 };
+
+// Explicit template instantiation
+template class SparseMatrixCSR<double>;
+template std::ostream& operator<<(std::ostream& os, const SparseMatrixCSR<double>& mat);

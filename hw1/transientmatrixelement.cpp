@@ -1,15 +1,18 @@
 #include "transientmatrixelement.hpp"
 #include "sparse.hpp"
 
-TransientMatrixElement::TransientMatrixElement(uint i, uint j, SparseMatrix& matrix) : locX(i), locY(j), matrix(matrix) {}
+template<typename T> TransientMatrixElement<T>::TransientMatrixElement(uint i, uint j, SparseMatrix<T>& matrix) : locX(i), locY(j), matrix(matrix) {}
 
 // Assignment operator
-TransientMatrixElement& TransientMatrixElement::operator=(const double& value) {
+template<typename T> TransientMatrixElement<T>& TransientMatrixElement<T>::operator=(const T& value) {
     this->matrix.setValue(locX, locY, value);
     return *this;
 }
 
 // conversion to double for read access
-TransientMatrixElement::operator double() const {
-    return static_cast<const SparseMatrix&>(this->matrix)(locX, locY);
+template<typename T> TransientMatrixElement<T>::operator T() const {
+    return static_cast<const SparseMatrix<T>&>(this->matrix)(locX, locY);
 }
+
+// Explicit instantiation for common types
+template class TransientMatrixElement<double>;

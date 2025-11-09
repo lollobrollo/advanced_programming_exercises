@@ -8,8 +8,8 @@
 int main() {
     std::cout << "Hello, Sparse Matrix!\n";
 
-    SparseMatrixCOO coo(3, 3);
-    SparseMatrixCSR csr(5, 5);
+    SparseMatrixCOO<double> coo(3, 3);
+    SparseMatrixCSR<double> csr(5, 5);
 
     std::cout << "SparseMatrixCOO and SparseMatrixCSR created.\n\n";
 
@@ -35,11 +35,11 @@ int main() {
     csr(1, 2) = 1.61;
     std::cout << "Updated SparseMatrixCSR:\n" << csr;
 
-    SparseMatrixCOO coo_from_csr = csr;
+    SparseMatrixCOO<double> coo_from_csr = csr;
     std::cout << "Converted SparseMatrixCSR to SparseMatrixCOO.\n";
     std::cout << coo_from_csr;
 
-    SparseMatrixCSR csr_from_coo = coo;
+    SparseMatrixCSR<double> csr_from_coo = coo;
     std::cout << "Converted SparseMatrixCOO to SparseMatrixCSR.\n";
     std::cout << csr_from_coo;
 

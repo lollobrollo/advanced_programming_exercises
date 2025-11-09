@@ -5,20 +5,20 @@
 
 typedef unsigned int uint;
 
-class SparseMatrix;
+template <typename T> class SparseMatrix; // forward declaration
 
-class TransientMatrixElement {
+template <typename T> class TransientMatrixElement {
   private:
     const uint locX;
     const uint locY;
-    SparseMatrix& matrix;
+    SparseMatrix<T>& matrix;
 
   public:
-    TransientMatrixElement(uint i, uint j, SparseMatrix& matrix);
+    TransientMatrixElement(uint i, uint j, SparseMatrix<T>& matrix);
 
     // Assignment operator
-    TransientMatrixElement& operator=(const double& value);
+    TransientMatrixElement& operator=(const T& value);
 
     // conversion to double for read access
-    operator double() const;
+    operator T() const;
 };

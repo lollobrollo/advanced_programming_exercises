@@ -19,25 +19,25 @@ TODO:
 
 typedef unsigned int uint;
 
-uint SparseMatrixCOO::get_nrows() const {
+template <typename T> uint SparseMatrixCOO<T>::get_nrows() const {
     return this->nrows;
 };
 
-uint SparseMatrixCOO::get_ncols() const {
+template <typename T> uint SparseMatrixCOO<T>::get_ncols() const {
     return this->ncols;
 };
 
-uint SparseMatrixCOO::get_nonzeros() const {
+template <typename T> uint SparseMatrixCOO<T>::get_nonzeros() const {
     return this->values.size();
 };
 
 // Parametrized constructor
-SparseMatrixCOO::SparseMatrixCOO(const uint nrows, const uint ncols) : nrows(nrows), ncols(ncols) {
+template <typename T> SparseMatrixCOO<T>::SparseMatrixCOO(const uint nrows, const uint ncols) : nrows(nrows), ncols(ncols) {
     std::cout << "Empty matrix of dimensions " << this->nrows << " x " << this->ncols << " initialized.\n";
 };
 
 // Copy constructor
-SparseMatrixCOO::SparseMatrixCOO(const SparseMatrixCOO& other) : nrows(other.nrows), ncols(other.ncols) {
+template <typename T> SparseMatrixCOO<T>::SparseMatrixCOO(const SparseMatrixCOO<T>& other) : nrows(other.nrows), ncols(other.ncols) {
     if(!other.values.empty()) {
         const uint num_elems = other.get_nonzeros();
         this->values.reserve(num_elems);
@@ -53,7 +53,7 @@ SparseMatrixCOO::SparseMatrixCOO(const SparseMatrixCOO& other) : nrows(other.nro
 };
 
 // Copy constructor from CSR
-SparseMatrixCOO::SparseMatrixCOO(const SparseMatrixCSR& other) : nrows(other.get_nrows()), ncols(other.get_ncols()) {
+template <typename T> SparseMatrixCOO<T>::SparseMatrixCOO(const SparseMatrixCSR<T>& other) : nrows(other.get_nrows()), ncols(other.get_ncols()) {
     // Convert CSR to COO
     this->values.clear();
     this->rows.clear();
@@ -70,7 +70,7 @@ SparseMatrixCOO::SparseMatrixCOO(const SparseMatrixCSR& other) : nrows(other.get
 }
 
 // Copy assignment operator
-SparseMatrixCOO& SparseMatrixCOO::operator=(const SparseMatrixCOO& other) {
+template <typename T> SparseMatrixCOO<T>& SparseMatrixCOO<T>::operator=(const SparseMatrixCOO<T>& other) {
   if(!(this->nrows == other.nrows) || !(this->ncols == other.ncols)) {
     std::cout << "Error: Matrices have conflicting sizes, assignment avoided.\n";
     return *this;
@@ -91,10 +91,10 @@ SparseMatrixCOO& SparseMatrixCOO::operator=(const SparseMatrixCOO& other) {
 };
 
 // Destructor: not needed, vectors take care of their own memory
-SparseMatrixCOO::~SparseMatrixCOO() = default; 
+template <typename T> SparseMatrixCOO<T>::~SparseMatrixCOO() = default; 
 
 // Read-only access to elements
-double SparseMatrixCOO::operator()(const uint row, const uint col) const {
+template <typename T> T SparseMatrixCOO<T>::operator()(const uint row, const uint col) const {
   if((row >= this->nrows) || (col >= this->ncols)) {
     std::cout << "Error: assigning value out of matrix bounds. Assignment avoided.\n";
     return 0.0;
@@ -113,7 +113,7 @@ double SparseMatrixCOO::operator()(const uint row, const uint col) const {
 };
 
 // Access to matrix elements, editing allowed: managed by external class
-TransientMatrixElement SparseMatrixCOO::operator()(const uint row, const uint col) {
+template <typename T> TransientMatrixElement<T> SparseMatrixCOO<T>::operator()(const uint row, const uint col) {
   if((row >= this->nrows) || (col >= this->ncols)) {
     throw std::out_of_range("Matrix indices out of bounds");
   };
@@ -121,7 +121,7 @@ TransientMatrixElement SparseMatrixCOO::operator()(const uint row, const uint co
 };
 
 // Function used by external proxy to access to matrix data
-void SparseMatrixCOO::setValue(const uint row, const uint col, const double value) {
+template <typename T> void SparseMatrixCOO<T>::setValue(const uint row, const uint col, const T value) {
   uint num_elems = this->get_nonzeros();
   uint found = num_elems + 1;
   // Check for matching coordinates
@@ -168,7 +168,7 @@ void SparseMatrixCOO::setValue(const uint row, const uint col, const double valu
 // };
 
 // Dot product, sparse matrix and vector+
-std::vector<double> SparseMatrixCOO::operator*(const std::vector<double>& vec) const {
+template <typename T> std::vector<T> SparseMatrixCOO<T>::operator*(const std::vector<T>& vec) const {
   if(!(this->nrows == vec.size())) {
     std::cout << "Error: sizes of matrix and vector do not match.\n";
     return vec;
@@ -182,7 +182,7 @@ std::vector<double> SparseMatrixCOO::operator*(const std::vector<double>& vec) c
 };
 
 // print to standard output
-std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat) {
+template <typename T> std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO<T>& mat) {
   os << "SparseMatrixCOO (" << mat.nrows << " x " << mat.ncols << ")\n";
   for (size_t idx = 0; idx < mat.values.size(); ++idx) {
     os << "(" << mat.rows.at(idx) << ", " << mat.cols.at(idx)
@@ -191,5 +191,6 @@ std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat) {
   return os;
 };
 
-
-
+// Explicit template instantiation
+template class SparseMatrixCOO<double>;
+template std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO<double>& mat);
