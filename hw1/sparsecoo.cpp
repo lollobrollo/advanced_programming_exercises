@@ -77,26 +77,36 @@ SparseMatrixCOO::~SparseMatrixCOO() = default;
 
 // Read-only access to elements
 double SparseMatrixCOO::operator()(const uint row, const uint col) const {
+  if((row >= this->nrows) || (col >= this->ncols)) {
+    std::cout << "Error: assigning value out of matrix bounds. Assignment avoided.\n";
+    return 0.0;
+  };
   uint num_elems = this->get_nonzeros();
   uint found = num_elems + 1;
+  // Check wether element with coordinates (i,j) already exists
   for(uint idx = 0; idx < num_elems; ++idx ) {
     if((this->rows.at(idx) == row) && (this->cols.at(idx) == col)) {
       found = idx;
       break;
     };
   };
-
+  // If searched element was not initialized, return 0.0 by default
   return (found < num_elems +1) ? this->values.at(found) : 0.0;
 };
 
-// Access to matrix elements, editing allowed
+// Access to matrix elements, editing allowed: managed by external class
 TransientMatrixElement SparseMatrixCOO::operator()(const uint row, const uint col) {
+  if((row >= this->nrows) || (col >= this->ncols)) {
+    throw std::out_of_range("Matrix indices out of bounds");
+  };
   return TransientMatrixElement(row, col, *this);
 };
 
+// Function used by external proxy to access to matrix data
 void SparseMatrixCOO::setValue(const uint row, const uint col, const double value) {
   uint num_elems = this->get_nonzeros();
   uint found = num_elems + 1;
+  // Check for matching coordinates
   for(uint idx = 0; idx < num_elems; ++idx ) {
     if((this->rows.at(idx) == row) && (this->cols.at(idx) == col)) {
       found = idx;
@@ -104,17 +114,16 @@ void SparseMatrixCOO::setValue(const uint row, const uint col, const double valu
     };
   };
 
-  if(found < num_elems +1) {
-    if(value != 0.0) {
+  if(found < num_elems +1) { // if element already exist in the matrix
+    if(value != 0.0) { // if we are not assigning zero, overwrite the value
       this->values.at(found) = value;
-    } else {
-      // Remove the element
+    } else { // if we are assigning zero, remove the element from the matrix
       this->values.erase(this->values.begin() + found);
       this->rows.erase(this->rows.begin() + found);
       this->cols.erase(this->cols.begin() + found);
     };
-  } else {
-    if(value != 0.0) {
+  } else { // If no value was initialized at given indexes
+    if(value != 0.0) { // If we are not assigning zero, save the value
       this->values.push_back(value);
       this->rows.push_back(row);
       this->cols.push_back(col);
@@ -149,7 +158,7 @@ std::vector<double> SparseMatrixCOO::operator*(const std::vector<double>& vec) c
 
   std::vector<double> result(this->nrows, 0.0); // skipped rows are defaulted to 0.0
   for(uint idx = 0; idx < this->values.size(); ++idx) {
-    result.at(this->rows.at(idx)) += this->values.at(idx) * vec.at(idx);
+    result.at(this->rows.at(idx)) += this->values.at(idx) * vec.at(idx); // Iteratively build result
   };
   return result;
 };

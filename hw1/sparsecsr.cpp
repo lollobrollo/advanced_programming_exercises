@@ -40,6 +40,10 @@ SparseMatrixCSR::~SparseMatrixCSR() {
 };
 
 double SparseMatrixCSR::operator()(const uint row, const uint col) const {
+    if((row >= this->nrows) || (col >= this->ncols)) {
+        std::cout << "Error: assigning value out of matrix bounds. Assignment avoided.\n";
+        return 0.0;
+    }
     // Find the row in the row_idx vector
     auto row_start = this->row_idx.at(row);
     auto row_end = this->row_idx.at(row + 1);
@@ -51,10 +55,13 @@ double SparseMatrixCSR::operator()(const uint row, const uint col) const {
         }
     }
 
-    return 0.0;
+    return 0.0; // Element not found, returning default
 }
 
 TransientMatrixElement SparseMatrixCSR::operator()(const uint row, const uint col) {
+    if((row >= this->nrows) || (col >= this->ncols)) {
+        throw std::out_of_range("Matrix indices out of bounds");
+    }
     return TransientMatrixElement(row, col, *this);
 };
 
@@ -102,11 +109,11 @@ void SparseMatrixCSR::setValue(const uint row, const uint col, const double valu
 std::vector<double> SparseMatrixCSR::operator*(const std::vector<double>& vec) const {
     std::vector<double> results(this->nrows, 0.0);
 
-    for (uint row = 0; row < nrows; ++row) {
+    for (uint row = 0; row < nrows; ++row) { // compute one at a time (row by row)
         uint row_start = row_idx.at(row);
-        uint row_end = row_idx.at(row + 1);
+        uint row_end = row_idx.at(row + 1); // assuming row_idx has size nrows+1
         for (uint idx = row_start; idx < row_end; ++idx) {
-            results.at(row) += values.at(idx) * vec.at(this->cols.at(idx));
+            results.at(row) += values.at(idx) * vec.at(this->cols.at(idx)); // compute results iteratively
         };
     };
 

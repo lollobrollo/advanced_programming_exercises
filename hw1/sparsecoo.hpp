@@ -30,7 +30,6 @@ class SparseMatrixCOO: public SparseMatrix {
     uint get_ncols() const override;
     uint get_nonzeros() const override;
 
-
     friend std::ostream& operator<<(std::ostream& os, const SparseMatrixCOO& mat);
 };
 

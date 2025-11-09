@@ -1,17 +1,3 @@
-/*
-Ah yes, is this the best way to share thoughts? Of course it is, it's the comments in the working file
-
-Random stuff:
-- see wether int vals can be converted to uint
-
-Proposals:
-- overload dot product to make it work for vectors that are both std::vector<> and SparseMatrix
-- templatize stuff
-- 
-
-*/
-
-
 #pragma once
 
 typedef unsigned int uint;
