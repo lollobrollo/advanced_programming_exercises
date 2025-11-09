@@ -126,7 +126,7 @@ template <typename T> void SparseMatrixCSR<T>::setValue(const uint row, const ui
 
 
 template <typename T> std::vector<T> SparseMatrixCSR<T>::operator*(const std::vector<T>& vec) const {
-    std::vector<T> results(this->nrows, 0.0);
+    std::vector<T> results(this->nrows, T{}); // initialize result vector with zeros
 
     for (uint row = 0; row < nrows; ++row) { // compute one at a time (row by row)
         uint row_start = row_idx.at(row);

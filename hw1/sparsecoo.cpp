@@ -174,7 +174,7 @@ template <typename T> std::vector<T> SparseMatrixCOO<T>::operator*(const std::ve
     return vec;
   };
 
-  std::vector<double> result(this->nrows, 0.0); // skipped rows are defaulted to 0.0
+  std::vector<T> result(this->nrows, T{}); // skipped rows are defaulted to 0.0
   for(uint idx = 0; idx < this->values.size(); ++idx) {
     result.at(this->rows.at(idx)) += this->values.at(idx) * vec.at(idx); // Iteratively build result
   };
