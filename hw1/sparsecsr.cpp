@@ -12,7 +12,7 @@ template <typename T> uint SparseMatrixCSR<T>::get_ncols() const {
 };
 
 template <typename T> uint SparseMatrixCSR<T>::get_nonzeros() const {
-    return this->values.size();
+    return static_cast<uint>(this->values.size());
 };
 
 // Parametrized constructor
@@ -59,7 +59,7 @@ template <typename T> SparseMatrixCSR<T>::~SparseMatrixCSR() {
 template <typename T> T SparseMatrixCSR<T>::operator()(const uint row, const uint col) const {
     if((row >= this->nrows) || (col >= this->ncols)) {
         std::cout << "Error: assigning value out of matrix bounds. Assignment avoided.\n";
-        return 0.0;
+        return T{};
     }
     // Find the row in the row_idx vector
     auto row_start = this->row_idx.at(row);
@@ -72,7 +72,7 @@ template <typename T> T SparseMatrixCSR<T>::operator()(const uint row, const uin
         }
     }
 
-    return 0.0; // Element not found, returning default
+    return T{}; // Element not found, returning default
 }
 
 template <typename T> TransientMatrixElement<T> SparseMatrixCSR<T>::operator()(const uint row, const uint col) {
@@ -92,7 +92,7 @@ template <typename T> void SparseMatrixCSR<T>::setValue(const uint row, const ui
     // Search for the column in the current row's range
     for (auto i = row_start; i < row_end; ++i) {
         if (this->cols.at(i) == col) {
-            if (value != 0.0) {
+            if (value != T{}) {
                 this->values.at(i) = value; // Update existing value
             } else {
                 // Remove the element
@@ -108,7 +108,7 @@ template <typename T> void SparseMatrixCSR<T>::setValue(const uint row, const ui
     }
 
     // If we reach here, the element does not exist
-    if (value != 0.0) {
+    if (value != T{}) {
         // Insert new element
         this->values.insert(this->values.begin() + row_end, value);
         this->cols.insert(this->cols.begin() + row_end, col);
@@ -157,8 +157,8 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const SparseMat
     return os;
 };
 
-template <typename T> SparseMatrix<T>& SparseMatrixCSR<T>::transpose() const {
-    SparseMatrixCSR<T> t(this->ncols, this->nrows);
+template <typename T> std::unique_ptr<SparseMatrix<T>> SparseMatrixCSR<T>::transpose() const {
+    auto t = std::make_unique<SparseMatrixCSR<T>>(this->ncols, this->nrows);
 
     // Count elements per column
     std::vector<uint> col_counts(this->ncols, 0);
@@ -167,22 +167,22 @@ template <typename T> SparseMatrix<T>& SparseMatrixCSR<T>::transpose() const {
     };
 
     // Build t.row_idx with a cumulative sum
-    t.row_idx.resize(this->ncols + 1, 0);
+    t->row_idx.resize(this->ncols + 1, 0);
     for (uint i = 0; i < this->ncols; ++i) {
-        t.row_idx[i + 1] = t.row_idx[i] + col_counts[i];
+        t->row_idx[i + 1] = t->row_idx[i] + col_counts[i];
     };
 
-    t.values.resize(this->values.size());
-    t.cols.resize(this->values.size());
+    t->values.resize(this->values.size());
+    t->cols.resize(this->values.size());
 
     // Build t.cols and t.values
-    std::vector<uint> next_free = t.row_idx; // used to point to next slot to be filled
+    std::vector<uint> next_free = t->row_idx; // used to point to next slot to be filled
     for (uint row = 0; row < this->nrows; ++row) { // for every row of starting matrix
         for (uint idx = this->row_idx[row]; idx < this->row_idx[row + 1]; ++idx) { // for every position of elements in that row
             uint c = this->cols[idx]; // get pre-transpose column
             uint dest = next_free[c]++; // get post-transpose destination (row) and then increment it for the next iteration
-            t.values[dest] = this->values[idx];
-            t.cols[dest] = row; // new column becomes previous row
+            t->values[dest] = this->values[idx];
+            t->cols[dest] = row; // new column becomes previous row
         };
     };
     return t;

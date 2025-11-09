@@ -28,7 +28,7 @@ template <typename T> uint SparseMatrixCOO<T>::get_ncols() const {
 };
 
 template <typename T> uint SparseMatrixCOO<T>::get_nonzeros() const {
-    return this->values.size();
+    return static_cast<uint>(this->values.size());
 };
 
 // Parametrized constructor
@@ -97,7 +97,7 @@ template <typename T> SparseMatrixCOO<T>::~SparseMatrixCOO() = default;
 template <typename T> T SparseMatrixCOO<T>::operator()(const uint row, const uint col) const {
   if((row >= this->nrows) || (col >= this->ncols)) {
     std::cout << "Error: assigning value out of matrix bounds. Assignment avoided.\n";
-    return 0.0;
+    return T{};
   };
   uint num_elems = this->get_nonzeros();
   uint found = num_elems + 1;
@@ -109,7 +109,7 @@ template <typename T> T SparseMatrixCOO<T>::operator()(const uint row, const uin
     };
   };
   // If searched element was not initialized, return 0.0 by default
-  return (found < num_elems +1) ? this->values.at(found) : 0.0;
+  return (found < num_elems +1) ? this->values.at(found) : T{};
 };
 
 // Access to matrix elements, editing allowed: managed by external class
@@ -133,7 +133,7 @@ template <typename T> void SparseMatrixCOO<T>::setValue(const uint row, const ui
   };
 
   if(found < num_elems +1) { // if element already exist in the matrix
-    if(value != 0.0) { // if we are not assigning zero, overwrite the value
+    if(value != T{}) { // if we are not assigning zero, overwrite the value
       this->values.at(found) = value;
     } else { // if we are assigning zero, remove the element from the matrix
       this->values.erase(this->values.begin() + found);
@@ -141,7 +141,7 @@ template <typename T> void SparseMatrixCOO<T>::setValue(const uint row, const ui
       this->cols.erase(this->cols.begin() + found);
     };
   } else { // If no value was initialized at given indexes
-    if(value != 0.0) { // If we are not assigning zero, save the value
+    if(value != T{}) { // If we are not assigning zero, save the value
       this->values.push_back(value);
       this->rows.push_back(row);
       this->cols.push_back(col);
@@ -170,8 +170,7 @@ template <typename T> void SparseMatrixCOO<T>::setValue(const uint row, const ui
 // Dot product, sparse matrix and vector+
 template <typename T> std::vector<T> SparseMatrixCOO<T>::operator*(const std::vector<T>& vec) const {
   if(!(this->nrows == vec.size())) {
-    std::cout << "Error: sizes of matrix and vector do not match.\n";
-    return vec;
+    throw std::invalid_argument("Error: sizes of matrix and vector do not match.\n");
   };
 
   std::vector<T> result(this->nrows, T{}); // skipped rows are defaulted to 0.0
@@ -191,17 +190,17 @@ template <typename T> std::ostream& operator<<(std::ostream& os, const SparseMat
   return os;
 };
 
-template <typename T> SparseMatrix<T>& SparseMatrixCOO<T>::transpose() const {
-    SparseMatrixCOO<T> t(this->ncols, this->nrows); // Create a new object to be returned
-    t.values.reserve(this->values.size());
-    t.rows.reserve(this->rows.size());
-    t.cols.reserve(this->cols.size());
+template <typename T> std::unique_ptr<SparseMatrix<T>> SparseMatrixCOO<T>::transpose() const {
+    auto t = std::make_unique<SparseMatrixCOO<T>>(this->ncols, this->nrows); // Create a new object to be returned
+    t->values.reserve(this->values.size());
+    t->rows.reserve(this->rows.size());
+    t->cols.reserve(this->cols.size());
 
     for (size_t i = 0; i < this->values.size(); ++i) {
       // Copy values as is, swap indexes of rows and columns
-      t.values.push_back(this->values[i]);
-      t.rows.push_back(this->cols[i]);
-      t.cols.push_back(this->rows[i]);
+      t->values.push_back(this->values[i]);
+      t->rows.push_back(this->cols[i]);
+      t->cols.push_back(this->rows[i]);
     };
     return t;
 };
