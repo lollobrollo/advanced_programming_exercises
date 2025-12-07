@@ -7,7 +7,7 @@ For this homework, we decided to work on implementations for modules **A** (stat
 
 In this section, contributors and respective main contributions are listed.
 
-### Lorenzo Bortolussi, lorenzo.bortolussi03@gmail.com:
+### Lorenzo Bortolussi, lorenzo.bortolussi@studenti.units.it:
 - Initial structure of project folders and CMakeLists;
 - Implementation of the **Statistics module** and corresponding tests; 
 - Incorporation of GetPot;
@@ -88,7 +88,7 @@ After building the executables with cmake, from the main folder, where the datas
 
 Opening the generated report, the results seem to match the expectations for this dataset. For example, the three different classes are balanced, and petal length and width are highly correlated. Interestingly, petal length is the only variable where median and mean are significantly different (median: 4.35; mean: 3.759) and it's also the variable with the highest standard deviation: this could suggest the presence of several outliers.
 
-The main program can also be used to perform numerical integration, specifying the function to integrate, the interval, the method to use and the number of intervals. For example, to compute the integral of sin(x) from 0 to pi using Simpson's rule:
+The main program can also be used to perform **numerical integration**, specifying the function to integrate, the interval, the method to use and the number of intervals. For example, to compute the integral of sin(x) from 0 to pi using Simpson's rule:
 ```bash
 ../build/main/main -m simpson -i "sin(x)" -a 0 -b 3.1416 -n 100
 ```
