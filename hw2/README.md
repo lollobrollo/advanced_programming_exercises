@@ -14,7 +14,7 @@ In this section, contributors and respective main contributions are listed.
 - Incorporation of GetPot;
 - Statystical analysis on Kaggle dataset.
 
-### Riccardo Riccio, *-mail-* :
+### Riccardo Riccio, riccardo.riccio@studenti.units.it:
 - Refinements on project structure and CMakeLists;
 - Implementation of **dataset** dependancy, used to read data files and store their content to be used by the two principal modules, and corresponding tests;
 - Implementation of the **Integration module** and corresponding tests.
@@ -25,22 +25,19 @@ In this section, contributors and respective main contributions are listed.
 - CMake, version > 3.10
 - GTest, used for testing
 - GetPot, third party library for command line parsing
+- muparserx (libmuparserx-dev), third party library for parsing mathematical expressions
+- Eigen3 (libeigen3-dev), third party library for linear algebra operations, in particular eigenvalues in gaussian integration
 
-To build the object files, simply run the following commands from the root of the project
+To build the libraries and executables, simply run the following commands from the root of the project
 
 ```bash
-cmake -S. -BCMakeFiles 
-cmake --build CMakeFiles
+cmake -S. -Bbuild
+cmake --build build
 ```
 
-To perform tests on the compiled modules, switch to the CMakeFiles folder and type:
+To perform tests on the compiled modules, switch to the build folder and type:
 ```bash
 ctest --output-on-failure
-```
-
-To create the executable files, in the build folder run:
-```bash
-make
 ```
 
 ## IMPLEMENTATION NOTES
@@ -73,9 +70,9 @@ The statistical analysis module on the iris dataset ([source](https://www.kaggle
 
 The analysis focuses on recreating known results regarding this dataset, to prove the correctness of the developed toolbox.
 
-After building the executables with cmake and make, from the main folder, where the dataset resides, we run:
+After building the executables with cmake, from the main folder, where the dataset resides, we run:
 ```bash
-../CMakeFiles/main/main -f iris.csv
+../build/main/main -f iris.csv
 ```
 
 Opening the generated report, the results seem to match the expectations for this dataset. For example, the three different classes are balanced, and petal length and width are highly correlated. Interestingly, petal length is the only variable where median and mean are significantly different (median: 4.35; mean: 3.759) and it's also the variable with the highest standard deviation: this could suggest the presence of several outliers.
