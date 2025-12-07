@@ -1,4 +1,4 @@
-add_library(statistics statistics.cpp)
+add_library(statistics SHARED statistics.cpp)
 
 # link against Dataset
 target_link_libraries(statistics dataset)

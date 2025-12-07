@@ -1,4 +1,4 @@
-add_library(integration 
+add_library(integration SHARED
     integration.cpp 
     integration_strategy.hpp 
     midpoint_rule.cpp 
