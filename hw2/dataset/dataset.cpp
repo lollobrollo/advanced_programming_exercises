@@ -44,7 +44,7 @@ Dataset::Dataset(const std::string &path) : num_rows(0) {
 
     num_rows = raw_rows.size();
 
-    // detect column types
+    // detect column types (default to string)
     column_types.resize(ncols, ColumnType::String);
     for (size_t c = 0; c < ncols; ++c) {
         bool all_nonempty_parse_double = true;

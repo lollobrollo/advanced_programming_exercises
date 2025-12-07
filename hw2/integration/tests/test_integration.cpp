@@ -338,6 +338,86 @@ TEST(IntegralEvaluatorTest, PolynomialExpression) {
     EXPECT_NEAR(result, 6.0, 1e-5);
 }
 
+// Helper function to compute the analytical integral of x^k from a to b
+double analytical_integral_monomial(double a, double b, int k) {
+    return (std::pow(b, k + 1) - std::pow(a, k + 1)) / (k + 1);
+}
+
+// Helper to build string for x^k
+std::string monomial_expr(int k) {
+    if (k == 0) return "1";
+    if (k == 1) return "x";
+    return "pow(x," + std::to_string(k) + ")";
+}
+
+// Midpoint Rule: degree 1
+TEST(MidpointRuleTest, PrecisionDegree) {
+    auto midpoint = std::make_unique<MidpointRule>();
+    double a = 0.0, b = 1.0;
+    int n_intervals = 1;
+    for (int k = 0; k <= 2; ++k) {
+        IntegralEvaluator evaluator(monomial_expr(k), std::make_unique<MidpointRule>());
+        double result = evaluator(a, b, n_intervals);
+        double expected = analytical_integral_monomial(a, b, k);
+        if (k <= 1) {
+            EXPECT_NEAR(result, expected, 1e-14) << "Failed for k=" << k;
+        } else {
+            // For k > 1, not guaranteed exact
+            EXPECT_GT(std::abs(result - expected), 1e-4) << "Should not be exact for k=" << k;
+        }
+    }
+}
+
+// Trapezoidal Rule: degree 1
+TEST(TrapezoidalRuleTest, PrecisionDegree) {
+    double a = 0.0, b = 1.0;
+    int n_intervals = 1;
+    for (int k = 0; k <= 2; ++k) {
+        IntegralEvaluator evaluator(monomial_expr(k), std::make_unique<TrapezoidalRule>());
+        double result = evaluator(a, b, n_intervals);
+        double expected = analytical_integral_monomial(a, b, k);
+        if (k <= 1) {
+            EXPECT_NEAR(result, expected, 1e-14) << "Failed for k=" << k;
+        } else {
+            EXPECT_GT(std::abs(result - expected), 1e-4) << "Should not be exact for k=" << k;
+        }
+    }
+}
+
+// Simpson's Rule: degree 3
+TEST(SimpsonsRuleTest, PrecisionDegree) {
+    double a = 0.0, b = 1.0;
+    int n_intervals = 1;
+    for (int k = 0; k <= 4; ++k) {
+        IntegralEvaluator evaluator(monomial_expr(k), std::make_unique<SimpsonsRule>());
+        double result = evaluator(a, b, n_intervals);
+        double expected = analytical_integral_monomial(a, b, k);
+        if (k <= 3) {
+            EXPECT_NEAR(result, expected, 1e-14) << "Failed for k=" << k;
+        } else {
+            EXPECT_GT(std::abs(result - expected), 1e-4) << "Should not be exact for k=" << k;
+        }
+    }
+}
+
+// Gaussian Quadrature: degree 2n-1 (n = number of points)
+TEST(GaussianQuadratureTest, PrecisionDegree) {
+    double a = 0.0, b = 1.0;
+    for (int n_points = 2; n_points <= 4; ++n_points) {
+        int max_degree = 2 * n_points - 1;
+        for (int k = 0; k <= max_degree + 1; ++k) {
+            IntegralEvaluator evaluator(monomial_expr(k), std::make_unique<GaussianQuadrature>());
+            double result = evaluator(a, b, n_points);
+            double expected = analytical_integral_monomial(a, b, k);
+            if (k <= max_degree) {
+                EXPECT_NEAR(result, expected, 1e-14) << "n_points=" << n_points << ", k=" << k;
+            } else {
+                EXPECT_GT(std::abs(result - expected), 1e-6) << "Should not be exact for n_points=" << n_points << ", k=" << k;
+            }
+        }
+    }
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
