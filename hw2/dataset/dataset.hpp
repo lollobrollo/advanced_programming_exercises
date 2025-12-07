@@ -5,6 +5,8 @@
 #include <variant>
 #include <optional>
 
+namespace SciCpp {
+
 enum class ColumnType {
     Double,
     String
@@ -39,3 +41,5 @@ private:
     std::vector<Row> rows;
     size_t num_rows;
 };
+
+} // namespace SciCpp

@@ -3,6 +3,8 @@
 #include <vector>
 #include <cstddef>
 
+namespace SciCpp {
+
 class IntegrationStrategy {
 // Abstract base class for integration strategies
 public:
@@ -12,3 +14,5 @@ public:
     virtual std::vector<double> getNodes(size_t n_intervals) const = 0;
     virtual double getScalingFactor(size_t n_intervals, double a, double b) const = 0;
 };
+
+} // namespace SciCpp

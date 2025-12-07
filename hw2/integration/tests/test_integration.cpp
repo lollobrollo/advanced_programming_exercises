@@ -12,6 +12,8 @@
 #include "integration/simpsons_rule.hpp"
 #include "integration/gaussian_quadrature.hpp"
 
+using namespace SciCpp;
+
 // Test MidpointRule weights
 TEST(MidpointRuleTest, WeightsForTwoIntervals) {
     MidpointRule rule;

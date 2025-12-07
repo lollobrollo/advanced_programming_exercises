@@ -7,6 +7,8 @@
 
 #include "../dataset.hpp"
 
+using namespace SciCpp;
+
 static std::string make_temp_csv() {
     std::string path = "test_dataset_temp.csv";
     std::ofstream out(path);

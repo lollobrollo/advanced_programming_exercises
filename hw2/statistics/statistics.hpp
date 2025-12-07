@@ -6,6 +6,7 @@
 #include <map>
 #include <iostream>
 
+namespace SciCpp {
 
 class StatisticalAnalyzer {
 // Class responsible for performing statistical analysis on a Dataset
@@ -33,3 +34,5 @@ private:
     // Helper: extracts valid numeric values from a column; throws if the column is textual or empty
     std::vector<double> extract_numeric_data(const std::string& col_name) const;
 };
+
+} // namespace SciCpp

@@ -6,6 +6,7 @@
 #include "statistics/statistics.hpp"
 #include "GetPot"
 
+using namespace SciCpp;
 
 // used to highlight titles of sections
 void print_header(const std::string& title) {

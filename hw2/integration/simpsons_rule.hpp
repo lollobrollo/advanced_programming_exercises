@@ -2,6 +2,8 @@
 
 #include "integration_strategy.hpp"
 
+namespace SciCpp{
+
 class SimpsonsRule : public IntegrationStrategy {
 // Simpson's rule integration strategy
 public:
@@ -9,3 +11,5 @@ public:
     std::vector<double> getNodes(size_t n_intervals) const override;
     double getScalingFactor(size_t n_intervals, double a, double b) const override;
 };
+
+} // namespace SciCpp

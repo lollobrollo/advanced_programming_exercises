@@ -7,6 +7,8 @@
 
 #include "integration_strategy.hpp"
 
+namespace SciCpp{
+
 class IntegralEvaluator {
 // Class responsible for performing integration tasks
 public:
@@ -16,3 +18,5 @@ private:
     std::string function_expression;
     std::unique_ptr<IntegrationStrategy> strategy;
 };
+
+} // namespace SciCpp

@@ -1,6 +1,8 @@
 #include "midpoint_rule.hpp"
 #include <vector>
 
+namespace SciCpp {
+
 std::vector<double> MidpointRule::getWeights(size_t n_intervals) const {
     return std::vector<double>(n_intervals, 1.0);
 }
@@ -16,3 +18,5 @@ std::vector<double> MidpointRule::getNodes(size_t n_intervals) const {
 double MidpointRule::getScalingFactor(size_t n_intervals, double a, double b) const {
     return (b - a) / n_intervals;
 }
+
+} // namespace SciCpp

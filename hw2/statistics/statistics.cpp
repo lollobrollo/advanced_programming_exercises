@@ -34,6 +34,8 @@ NOTES:
 #include <iostream>
 
 
+namespace SciCpp{
+
 StatisticalAnalyzer::StatisticalAnalyzer(const Dataset& dataset): dataset(dataset) {};
 
 
@@ -249,3 +251,6 @@ void StatisticalAnalyzer::generate_report(const std::string& filename, const std
     }
     std::cout << "Report generated at: " << filename << std::endl;
 }
+
+
+} // namespace SciCpp

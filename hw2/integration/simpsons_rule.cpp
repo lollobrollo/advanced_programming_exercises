@@ -1,6 +1,8 @@
 #include "simpsons_rule.hpp"
 #include <vector>
 
+namespace SciCpp{
+
 std::vector<double> SimpsonsRule::getWeights(size_t n_intervals) const {
     // Composite Simpson's rule requires 2*n_intervals + 1 points
     size_t n_points = 2 * n_intervals + 1;
@@ -31,3 +33,5 @@ std::vector<double> SimpsonsRule::getNodes(size_t n_intervals) const {
 double SimpsonsRule::getScalingFactor(size_t n_intervals, double a, double b) const {
     return (b - a) / (6.0 * n_intervals);
 }
+
+} // namespace SciCpp

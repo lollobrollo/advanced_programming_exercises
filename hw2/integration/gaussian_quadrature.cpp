@@ -4,6 +4,8 @@
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
 
+namespace SciCpp {
+
 // Compute Gauss-Legendre nodes and weights using Golub-Welsch algorithm
 // Source: https://www.ams.org/journals/mcom/1969-23-106/S0025-5718-69-99647-1/S0025-5718-69-99647-1.pdf
 void computeGaussLegendreNodesAndWeights(size_t n, std::vector<double>& nodes, std::vector<double>& weights) {
@@ -65,3 +67,5 @@ double GaussianQuadrature::getScalingFactor(size_t n_intervals, double a, double
     (void)n_intervals; // Unused parameter (hide warning)
     return (b - a) / 2.0;
 }
+
+} // namespace SciCpp

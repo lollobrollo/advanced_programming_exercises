@@ -6,6 +6,7 @@
 #include "dataset/dataset.hpp"
 #include "statistics/statistics.hpp"
 
+using namespace SciCpp;
 
 // creates a CSV with two correlated columns
 static std::string make_numeric_csv() {

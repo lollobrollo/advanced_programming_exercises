@@ -2,6 +2,8 @@
 #include <stdexcept>
 #include <muparserx/mpParser.h>
 
+namespace SciCpp {
+
 // Implementation of IntegralEvaluator
 IntegralEvaluator::IntegralEvaluator(std::string function_expression, 
                                      std::unique_ptr<IntegrationStrategy> strategy)
@@ -47,3 +49,5 @@ double IntegralEvaluator::operator()(double a, double b, size_t n_intervals) con
     
     return result;
 }
+
+} // namespace SciCpp

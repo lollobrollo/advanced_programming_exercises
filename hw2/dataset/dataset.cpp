@@ -1,9 +1,10 @@
 #include "dataset.hpp"
-
 #include <fstream>
 #include <stdexcept>
 #include <algorithm>
 #include <optional>
+
+namespace SciCpp {
 
 static std::vector<std::string> split_csv_line(const std::string &line) {
     if (line.empty()) return {};
@@ -31,7 +32,7 @@ Dataset::Dataset(const std::string &path) : num_rows(0) {
     if (!std::getline(in, line)) return; // empty file -> empty dataset
     column_names = split_csv_line(line);
     size_t ncols = column_names.size();
-
+    
     std::vector<std::vector<std::string>> raw_rows;
     while (std::getline(in, line)) {
         if (line.empty()) continue;
@@ -129,3 +130,5 @@ Dataset::Cell Dataset::operator()(size_t index, const std::string &column_name) 
 
 std::vector<Dataset::Row>::const_iterator Dataset::begin() const { return rows.cbegin(); }
 std::vector<Dataset::Row>::const_iterator Dataset::end() const { return rows.cend(); }
+
+} // namespace SciCpp

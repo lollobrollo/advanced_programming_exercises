@@ -1,6 +1,8 @@
 #include "trapezoidal_rule.hpp"
 #include <vector>
 
+namespace SciCpp{
+
 std::vector<double> TrapezoidalRule::getWeights(size_t n_intervals) const {
     std::vector<double> weights(n_intervals + 1);
     weights[0] = 0.5;
@@ -24,3 +26,5 @@ std::vector<double> TrapezoidalRule::getNodes(size_t n_intervals) const {
 double TrapezoidalRule::getScalingFactor(size_t n_intervals, double a, double b) const {
     return (b - a) / n_intervals;
 }
+
+} // namespace SciCpp
