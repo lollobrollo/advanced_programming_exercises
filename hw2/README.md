@@ -58,11 +58,11 @@ To develop this module, I made some research into visitors ([here](https://www.c
 I decided to use constexpr to compute the result of type comparisons during compile time, as the type of the variant is defined at compile time with the template, so that the compiler could avoid compiling the unused if branch, saving time and avoiding possible type mismatch errors.
 
 While searching ways to compute the mean of a vector, I found [this page](https://riptutorial.com/cplusplus/example/19185/using-std--nth-element-to-find-the-median--or-other-quantiles-), which suggested to use the function nth_element() as it is more efficient than sorting the whole vector.
-  
-On a side note, I used some string methods and some methods from [iomanip](https://cplusplus.com/reference/iomanip/) to format the output in a better way.
+
+An interesting constraint appeared when I was waiting for the dataset to be developed, as my companion is the one who worked on it. At the beginning of the project I had to develop methods making assumptions on how to interact with the dataset. After I was provided with the header of the dataset implementation, I could adapt my code and make suggestion based on the functionalities I needed.
 
 
-### main data analysis
+### main data analysis demo
 The trickiest part in this section was the inclusion of the third party library [GetPot](https://sourceforge.net/projects/getpot/files/). The expectation of a single header file complete with the library implementation was not met, but thanks to the clear readme file and the examples provided, I decided to simply copy the three files with the implementation (GetPot as the interface, getpot.cpp and getpot.hpp containing the declarations and definitions) into the main folder, to be inlcuded as they are into the main statistical analysis.
 
 We also spent a lot of time doing data cleaning to use some particular datasets found on kaggle, but in the end we opted for a simpler dataset to work with.
