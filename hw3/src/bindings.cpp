@@ -55,8 +55,17 @@ PYBIND11_MODULE(scicpp_core, m) {
 
     // --- 4. Integral Evaluator ---
     py::class_<IntegralEvaluator>(m, "IntegralEvaluator")
-        // Note: pybind11 handles unique_ptr ownership automatically
-        .def(py::init<std::string, std::unique_ptr<IntegrationStrategy>>())
+        /* 
+         * While returning unique pointers in this way is allowed, it is illegal to
+         * use them as function arguments. [...] The above signature would imply that 
+         * Python needs to give up ownership of an object that is passed to this function, 
+         * which is generally not possible.
+         *
+         * See: https://stackoverflow.com/questions/77564007/how-to-deal-with-libraries-requiring-unique-ptr-as-inputs-in-pybind11 
+         */
+        .def(py::init([](std::string expr, IntegrationStrategy* strategy) {
+            return new IntegralEvaluator(expr, std::unique_ptr<IntegrationStrategy>(strategy));
+        }))
         .def("__call__", &IntegralEvaluator::operator(), 
              py::arg("a"), py::arg("b"), py::arg("n_intervals"));
 }
