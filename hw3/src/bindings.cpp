@@ -15,7 +15,7 @@ using namespace SciCpp;
 
 // thanks to template metaprogramming, many function arguments are automatically inferrred
 
-PYBIND11_MODULE(scicpp_core, m) {
+PYBIND11_MODULE(scicpp, m) {
     m.doc() = "Scientific Computing Toolbox Core Bindings";
 
     // --- 1. Dataset Bindings ---
