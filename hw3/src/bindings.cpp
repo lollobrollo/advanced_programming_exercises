@@ -1,3 +1,6 @@
+// pybind documentation was pretty usefol here:
+// https://pybind11.readthedocs.io/en/stable/advanced/functions.html
+
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h> // required for std::vector, std::optional, std::variant, std::map
 #include <pybind11/functional.h>
