@@ -3,6 +3,11 @@ import time
 import os
 import math
 
+# before running this script, go to the root of hw3 and execcute the following command:
+# export PYTHONPATH=$PYTHONPATH:$(pwd)/CMakeFiles/src
+# this makes the pybind mibrary (which should have been build previously with cmake) available for import
+
+
 # dummy dataset for testing
 def create_test_csv(filename, rows=1000000):
     print(f"Creating a test dataset with {rows} rows...")
