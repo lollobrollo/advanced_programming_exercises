@@ -1,5 +1,6 @@
 #include "simpsons_rule.hpp"
 #include <vector>
+#include <memory>
 
 namespace SciCpp{
 
@@ -32,6 +33,10 @@ std::vector<double> SimpsonsRule::getNodes(size_t n_intervals) const {
 
 double SimpsonsRule::getScalingFactor(size_t n_intervals, double a, double b) const {
     return (b - a) / (6.0 * n_intervals);
+}
+
+std::unique_ptr<IntegrationStrategy> SimpsonsRule::clone() const {
+    return std::unique_ptr<SimpsonsRule>(new SimpsonsRule{*this});
 }
 
 } // namespace SciCpp

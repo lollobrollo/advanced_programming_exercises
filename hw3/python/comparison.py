@@ -2,7 +2,8 @@ import scicpp # shared library built with pybind11
 import time
 import os
 import math
-import modules
+from statistics import StatisticsAnalyzer
+from integration import IntegralEvaluator
 
 # before running this script, go to the root of hw3 and execcute the following command:
 # export PYTHONPATH=$PYTHONPATH:$(pwd)/CMakeFiles/src
@@ -27,7 +28,7 @@ if __name__ == "__main__":
     # Load Dataset using C++
     ds = scicpp.Dataset(csv_file)
     # Create an instance of the analyer
-    perf_analyzer = modules.StatisticsAnalyzer(ds)
+    perf_analyzer = StatisticsAnalyzer(ds)
 
     # Perform comparisons and produce report
     perf_analyzer.perform_analysis("Value", "Value")
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     print("\n--- Integration Correctness ---")
     # Test all integration strategies on x^2 from 0 to 3 (Expected result: 3^3 / 3 = 9.0)
     func, a, b, n, expected = 'x^2', 0.0, 3.0, 100, 9.0
-    evaluator = modules.IntegralEvaluator()
+    evaluator = IntegralEvaluator()
     evaluator.compare_all(func, a, b, n, expected)
 
 

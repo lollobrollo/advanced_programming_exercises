@@ -64,10 +64,12 @@ PYBIND11_MODULE(scicpp, m) {
          * Python needs to give up ownership of an object that is passed to this function, 
          * which is generally not possible.
          *
+         * Workaround: use a raw pointer and transfer ownership of a copy inside the constructor.
+         *
          * See: https://stackoverflow.com/questions/77564007/how-to-deal-with-libraries-requiring-unique-ptr-as-inputs-in-pybind11 
          */
         .def(py::init([](std::string expr, IntegrationStrategy* strategy) {
-            return new IntegralEvaluator(expr, std::unique_ptr<IntegrationStrategy>(strategy));
+            return new IntegralEvaluator(expr, strategy->clone());
         }))
         .def("__call__", &IntegralEvaluator::operator(), 
              py::arg("a"), py::arg("b"), py::arg("n_intervals"));
