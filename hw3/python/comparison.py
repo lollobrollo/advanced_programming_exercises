@@ -1,14 +1,10 @@
 import scicpp # shared library built with pybind11
-import time
 import os
 import math
-from statistics import StatisticsAnalyzer
+from statisticsbenchmarker import StatisticsBenchmarker
+from pystatistics import PyStatistics
+from cppstatistics import CppStatistics
 from integration import IntegralEvaluator
-
-# before running this script, go to the root of hw3 and execcute the following command:
-# export PYTHONPATH=$PYTHONPATH:$(pwd)/CMakeFiles/src
-# this makes the pybind mibrary (which should have been build previously with cmake) available for import
-
 
 # dummy dataset for testing
 def create_test_csv(filename, rows=1000000):
@@ -27,17 +23,25 @@ if not os.path.exists(csv_file):
 if __name__ == "__main__":
     # Load Dataset using C++
     ds = scicpp.Dataset(csv_file)
-    # Create an instance of the analyer
-    perf_analyzer = StatisticsAnalyzer(ds)
+
+    # Create an instance of the analyzer (Python variant)
+    py_analyzer = PyStatistics(ds)
+    py_analyzer._get_column("Value") # Pre-extract values from dataset to make comparison fair
+    py_perf_bench = StatisticsBenchmarker("Python", analyzer = py_analyzer)
+    py_perf_bench.perform_analysis(col="Value", comparison_col="Value")
+
+    # Create an instance of the analyzer (Cpp variant)
+    cpp_perf_bench = StatisticsBenchmarker("C++", analyzer = CppStatistics(ds))
+    cpp_perf_bench.perform_analysis(col="Value", comparison_col="Value")
 
     # Perform comparisons and produce report
-    perf_analyzer.perform_analysis("Value", "Value")
+    cpp_perf_bench.report_comparison(other=py_perf_bench)
 
     print("\n--- Generating Report ---")
     report_file = "stat_report.txt"
     # calling a C++ method with Python list inputs
-    perf_analyzer.generate_report(report_file, ["Value", "Category"])
-    if os.path.exists("hw3_report.txt"):
+    CppStatistics(ds).generate_report(report_file, ["Value", "Category"])
+    if os.path.exists(report_file):
         print(f"Report successfully generated: {report_file}")
 
     print("\n--- Integration Correctness ---")
