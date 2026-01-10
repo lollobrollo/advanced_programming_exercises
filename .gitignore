@@ -4,3 +4,11 @@
 **/Makefile
 **/CMakeFiles/
 **/build/
+
+# Python
+**/*.so
+**/__pycache__/
+
+# Generated files
+*_report.txt
+test_data.csv

@@ -27,16 +27,16 @@ In this section, contributors and respective main contributions are listed.
 - CMake, version > 3.10
 - GTest, used for testing
 - Python3, version > 3.10
-- pybind11, version > 3.0.1 (latest)
+- pybind11 (pybind11-dev), version > 2.13
 - muparserx (libmuparserx-dev), third party library for parsing mathematical expressions
 - Eigen3 (libeigen3-dev), third party library for linear algebra operations, in particular eigenvalues in gaussian integration
 
 To build the shared library, run the following commands from the root of the project
 
 ```bash
-cmake -S. -BCMakeFiles
-cmake --build CMakeFiles
-export PYTHONPATH=$PYTHONPATH:$(pwd)/CMakeFiles/src
+cmake -S. -Bbuild
+cmake --build build
+cmake --install build
 ```
 
 To perform tests on the compiled modules, switch to the build (CMakeFiles) folder and type:
