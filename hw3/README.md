@@ -1,5 +1,5 @@
 
-# HOMEWORK 2 
+# HOMEWORK 3
 
 In this homework, we enhanced the C++ scientific computing toolbox developed for homework 2 with Python bindings and additional functionalities.
 
@@ -11,12 +11,12 @@ In this section, contributors and respective main contributions are listed.
 - pybind11 bindings for the C++ code of hw2;
 - Developement of CMake to include pybind11;
 - First version of python files: modules.py (C++ functionalities into Python classes) and comparison.py (performance analysis and results accuracy);
-- After code revision, added another version of the statistical analyzer;
+- After code revision, added another version of the statistical analyzer (using numpy and scipy);
 
 
 ### Riccardo Riccio, riccardo.riccio@studenti.units.it:
 - Revision of the bindings, corrected unique_ptr handling;
-- Revision of CMakeLists.txt, allow for installation of the library in python dir;
+- Revision of CMakeLists.txt, now allows for installation of the library in *python* dir;
 - Restructuring of python code to exploit polymorphism;
 - Profiling of statistical methods using py-spy;
 
@@ -37,11 +37,6 @@ To build the shared library, run the following commands from the root of the pro
 cmake -S. -Bbuild
 cmake --build build
 cmake --install build
-```
-
-To perform tests on the compiled modules, switch to the build folder and type:
-```bash
-ctest --output-on-failure
 ```
 
 Tests for the C++ code have been implemented in homework 2. The testing suite was extended to cover the new python bindings. To run the tests, after building the project, navigate to the *python* folder and run: 
