@@ -1,5 +1,7 @@
 import scicpp
 import math
+import numpy as np
+from scipy import stats
 from statisticsanalyzer import StatisticsAnalyzer
 
 class PyStatistics(StatisticsAnalyzer):
@@ -45,3 +47,41 @@ class PyStatistics(StatisticsAnalyzer):
         num = sum((x - mu1) * (y - mu2) for x, y in zip(data, data2))
         den = math.sqrt(sum((x - mu1)**2 for x in data) * sum((y - mu2)**2 for y in data2))
         return num / den if den != 0 else 0
+
+
+class SciPyStatistics(StatisticsAnalyzer):
+    """ Equivalent implementation of scicpp in python using NumPy and SciPy """
+    def __init__(self, ds:scicpp.Dataset):
+        self._ds = ds
+        self.cols = {}
+
+    def _get_column(self, col: str):
+        if col not in self.cols:
+            raw_data = self._ds.get_column(col)
+            # Filter None and convert to a numpy array for SciPy compatibility
+            filtered_data = [v for v in raw_data if v is not None]
+            self.cols[col] = np.array(filtered_data)
+        return self.cols[col]
+
+    def mean(self, col: str):
+        data = self._get_column(col)
+        return np.mean(data)
+
+    def median(self, col: str):
+        data = self._get_column(col)
+        return np.median(data)
+
+    def var(self, col: str):
+        data = self._get_column(col)
+        return np.var(data, ddof=1) # ddof=1 -> division by (n-1)
+
+    def std_dev(self, col: str):
+        data = self._get_column(col)
+        return np.std(data, ddof=1) #same as above
+
+    def corr(self, col1: str, col2: str):
+        data1 = self._get_column(col1)
+        data2 = self._get_column(col2)
+        
+        correlation, _ = stats.pearsonr(data1, data2) # returns (correlation_coefficient, p_value)
+        return correlation

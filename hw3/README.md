@@ -10,14 +10,14 @@ In this section, contributors and respective main contributions are listed.
 ### Lorenzo Bortolussi, lorenzo.bortolussi@studenti.units.it:
 - pybind11 bindings for the C++ code of hw2;
 - Developement of CMake to include pybind11;
-- modules.py which integrates C++ functionalities into Python classes;
-- comparison.py which performs performance analysis and checks results accuracy for our custom library;
+- First version of python files: modules.py (C++ functionalities into Python classes) and comparison.py (performance analysis and results accuracy);
+- After code revision, added another version of the statistical analyzer;
 
 
 ### Riccardo Riccio, riccardo.riccio@studenti.units.it:
-- Revision of the bindings;
-- Revision of CMakeLists.txt;
-- 
+- Revision of the bindings, corrected unique_ptr handling;
+- Revision of CMakeLists.txt, added ;
+- Restructuring of python code to exploit polymorphism;
 - 
 - 
 
@@ -28,6 +28,7 @@ In this section, contributors and respective main contributions are listed.
 - GTest, used for testing
 - Python3, version > 3.10
 - pybind11 (pybind11-dev), version > 2.13
+- SciPy, verion > 1.11.4
 - muparserx (libmuparserx-dev), third party library for parsing mathematical expressions
 - Eigen3 (libeigen3-dev), third party library for linear algebra operations, in particular eigenvalues in gaussian integration
 
@@ -50,42 +51,75 @@ ctest --output-on-failure
 After the previous setup steps have been completed, it is possible to move into the *python* folder and execute
 
 ```
-python3 comparisons.py
+python3 comparison.py
 ```
 
 to show how integration using pybind works seamlessly as a python module. Below are reported the results of an analisys performed on the quality of our C++ core library.
 
 ### Statistics module comparison
 
-What follows is the result of a performance comparison for the statistical module, which have been confirmed to be pretty consistend amond different re-runs of the script, considering a dataset of size $n=1000000$ of values extracted from the $sine$ function.
+In the following are reported comparisons of the statistical module we implemented in C++ with two different classes that perform the same operations implemented in python. In the first one (denoted as 'Python') we implemented manually and naively all the operations, while in the second one (denoted as 'Scientific Python') we used libraries like NumPy and SciPy to perform the analysis.
+
+The comparisons have been confirmed to be pretty consistent among different re-runs of the script, considering a dataset of size $n=1000000$ of values extracted from the $sine$ function.
+
+#### C++ vs BASIC PYTHON
 
 ```
 --- Performance Comparison Analysis ---
 
 Metric: MEAN
-  C++:        0.000000 | Time: 0.049330s
-  Python:     0.000000 | Time: 0.007012s
-  Speedup: 0.14x faster using C++
+  C++:     0.000000 | Time: 0.055745s
+  Python:     0.000000 | Time: 0.014597s
+  Speedup: 0.26x faster using C++
 
 Metric: MEDIAN
-  C++:        0.000003 | Time: 0.102604s
-  Python:     0.000003 | Time: 0.130464s
-  Speedup: 1.27x faster using C++
+  C++:     0.000003 | Time: 0.106153s
+  Python:     0.000003 | Time: 0.205642s
+  Speedup: 1.94x faster using C++
 
 Metric: VARIANCE
-  C++:        0.500001 | Time: 0.062090s
-  Python:     0.500001 | Time: 0.083341s
-  Speedup: 1.34x faster using C++
+  C++:     0.500001 | Time: 0.064286s
+  Python:     0.500001 | Time: 0.094774s
+  Speedup: 1.47x faster using C++
 
 Metric: CORRELATION
-  C++:        1.000000 | Time: 0.096365s
-  Python:     1.000000 | Time: 0.222169s
-  Speedup: 2.31x faster using C++
+  C++:     1.000000 | Time: 0.104387s
+  Python:     1.000000 | Time: 0.311248s
+  Speedup: 2.98x faster using C++
 ```
 
-We can see that, while statistical results are the same as expected, time measurements are surprisingly close. In particular, the pure Python approach performs better while computing the mean, while it performs slightly worse in the computation of other metrics. This comes as a surprise, as we expected the hybrid approach to achieve far better results thanks to its lower level nature.
+We can see that, while statistical results are the same as expected, time measurements are surprisingly close. In particular, the pure Python approach performs better in computing the mean, while it performs worse in the computation of the other metrics. This comes as a surprise, as we expected the hybrid approach to achieve far better results thanks to its lower level nature.
 
 We can assume Python seems competitive for these operations as it has already optimized functions, the GIL does not slow down a single threaded process and the C++ implementation is probably bottlenecked by memory management overhead, as we allocate and copy vectors inside each method call. This theory will be later explored with profiling.
+
+#### C++ vs SCIENTIFIC PYTHON
+
+```
+Metric: MEAN
+  C++:     0.000000 | Time: 0.055745s
+  Scientific Python:     0.000000 | Time: 0.001213s
+  Speedup: 0.02x faster using C++
+
+Metric: MEDIAN
+  C++:     0.000003 | Time: 0.106153s
+  Scientific Python:     0.000003 | Time: 0.008358s
+  Speedup: 0.08x faster using C++
+
+Metric: VARIANCE
+  C++:     0.500001 | Time: 0.064286s
+  Scientific Python:     0.500001 | Time: 0.004129s
+  Speedup: 0.06x faster using C++
+
+Metric: CORRELATION
+  C++:     1.000000 | Time: 0.104387s
+  Scientific Python:     1.000000 | Time: 0.037160s
+  Speedup: 0.36x faster using C++
+```
+
+The results abose show how python scientific libraries have been optimized for a long time and outperform greatly the package we developed. in particular, simpler operations like mean and median are performed much faster using numpy rather than our custom library.
+
+Apart from the time required by the methods, we can confirm that our implementation yelds the correct results, which are the same as the ones yelded by the python methods.
+
 
 ### Integration Module
 

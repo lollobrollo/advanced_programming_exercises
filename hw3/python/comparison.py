@@ -2,7 +2,7 @@ import scicpp # shared library built with pybind11
 import os
 import math
 from statisticsbenchmarker import StatisticsBenchmarker
-from pystatistics import PyStatistics
+from pystatistics import PyStatistics, SciPyStatistics
 from cppstatistics import CppStatistics
 from integration import IntegralEvaluator
 
@@ -24,18 +24,27 @@ if __name__ == "__main__":
     # Load Dataset using C++
     ds = scicpp.Dataset(csv_file)
 
-    # Create an instance of the analyzer (Python variant)
+    # Create an instance of the analyzer (Python basic variant)
     py_analyzer = PyStatistics(ds)
     py_analyzer._get_column("Value") # Pre-extract values from dataset to make comparison fair
     py_perf_bench = StatisticsBenchmarker("Python", analyzer = py_analyzer)
     py_perf_bench.perform_analysis(col="Value", comparison_col="Value")
 
+    # Create an instance of the analyzer (Python variant with numpy)
+    scipy_analyzer = SciPyStatistics(ds)
+    scipy_analyzer._get_column("Value") # Pre-extract values from dataset to make comparison fair
+    scipy_perf_bench = StatisticsBenchmarker("Scientific Python", analyzer = scipy_analyzer)
+    scipy_perf_bench.perform_analysis(col="Value", comparison_col="Value")
+
+
     # Create an instance of the analyzer (Cpp variant)
     cpp_perf_bench = StatisticsBenchmarker("C++", analyzer = CppStatistics(ds))
     cpp_perf_bench.perform_analysis(col="Value", comparison_col="Value")
 
-    # Perform comparisons and produce report
+    # Perform comparisons and produce report;
+    # comparisons are made between our custom library and the python analyzers
     cpp_perf_bench.report_comparison(other=py_perf_bench)
+    cpp_perf_bench.report_comparison(other=scipy_perf_bench)
 
     print("\n--- Generating Report ---")
     report_file = "stat_report.txt"
