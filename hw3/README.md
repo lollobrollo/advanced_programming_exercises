@@ -16,10 +16,9 @@ In this section, contributors and respective main contributions are listed.
 
 ### Riccardo Riccio, riccardo.riccio@studenti.units.it:
 - Revision of the bindings, corrected unique_ptr handling;
-- Revision of CMakeLists.txt, added ;
+- Revision of CMakeLists.txt, allow for installation of the library in python dir;
 - Restructuring of python code to exploit polymorphism;
-- 
-- 
+- Profiling of statistical methods using py-spy;
 
 
 ## PROJECT SETUP
@@ -40,11 +39,16 @@ cmake --build build
 cmake --install build
 ```
 
-To perform tests on the compiled modules, switch to the build (CMakeFiles) folder and type:
+To perform tests on the compiled modules, switch to the build folder and type:
 ```bash
 ctest --output-on-failure
 ```
 
+Tests for the C++ code have been implemented in homework 2. The testing suite was extended to cover the new python bindings. To run the tests, after building the project, navigate to the *python* folder and run: 
+
+```
+python3 -m unittest discover -s tests
+```
 
 ## PYBIND11 INTEGRATION RESULTS
 
@@ -155,10 +159,26 @@ The integration module shows pretty satisfactory results. For the quadratic func
 
 ### Considerations on the developement
 
-The file *comparisons.py*, as the name suggests, was born with the aim to show the successful integration of the bindings and to analyze the performance of the newly obtained library
+The file *comparison.py*, as the name suggests, was born with the aim to show the successful integration of the bindings and to analyze the performance of the newly obtained library
 
-The class *StatisticsAnalyzer* was born to group all methods related to the prformance analysis of the **Statystical Module** together, which allowed for example the use of a decorator to profile the execution time of methods from this module. During its developement it became clear that it could also be used as a wrapper for the original *StatisticalAnalyzer*, so more methods were added to turn it in both a tool for measuring performance and a tool for statistical analysis. Due to this fact, we decided to split *comparisons.py* in two files:
-- ***modules.py***, where class wrapper for both modules can be accessed and imported;
-- ***comparisons.py***, which imports the class defined in *integration.py* and performs the required analisys.
+The class *StatisticsAnalyzer* was born to group all methods related to the prformance analysis of the **Statystical Module** together, which allowed for example the use of a decorator to profile the execution time of methods from this module. During its developement it became clear that it could also be used as a wrapper for the original *StatisticalAnalyzer*, so more methods were added to turn it in both a tool for measuring performance and a tool for statistical analysis. Due to this fact, we decided to split *comparison.py* into more classes to enchance modularity and cohesion.
 
-## TESTING AND PROFILING
+## PROFILING
+
+For profiling, we used py-spy, a statistical profiler for Python with support for native code. We analyzed the time spent in the StatisticsAnalyzer subclasses. To profile the code, run the following command in the python folder:
+
+```bash
+py-spy record --native -- python3 -m comparison
+```
+
+In order to profile also the C++ code in the SciCpp module it is necessary to add the `--native` flag to py-spy and make a debug build of the C++ code with `-DCMAKE_BUILD_TYPE=Debug` during the CMake configuration step. 
+
+The profiling process will generate an interactive SVG file that can be opened in a web browser to visualize the profiling results. An output flamegraph is provided in the file `profile.svg`.
+
+The results confirmed our previous assumptions: most of the time (~53%) is used for parsing the csv and managing vectors in the dataset class for the cpp implementation also due to the dataset being stored both in row major and in column major. A considerable amount of time (~13%) is also spent to create the csv and write it to disk.
+
+We also noticed that a significant amount of time (~4%) is used to get the column data from the cpp implementation of dataset into its python representation so we decided to pre-fetch required columns at initialization to avoid the overhead from affecting the performance measurements in the Benchmarker class.
+
+Finally, the actual statistical methods take up only a small portion of the total execution time, the most expensive one being the median, since it requires sorting the data, and the correlation, due to multiple passes over the data. For both we can see that the C++ implementation is a bit faster than the python one.
+
+![Flamegraph](profile.svg)
