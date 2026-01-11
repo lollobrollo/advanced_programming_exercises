@@ -1,5 +1,6 @@
 #include "midpoint_rule.hpp"
 #include <vector>
+#include <memory>
 
 namespace SciCpp {
 
@@ -17,6 +18,10 @@ std::vector<double> MidpointRule::getNodes(size_t n_intervals) const {
 
 double MidpointRule::getScalingFactor(size_t n_intervals, double a, double b) const {
     return (b - a) / n_intervals;
+}
+
+std::unique_ptr<IntegrationStrategy> MidpointRule::clone() const {
+    return std::unique_ptr<MidpointRule>(new MidpointRule{*this});
 }
 
 } // namespace SciCpp

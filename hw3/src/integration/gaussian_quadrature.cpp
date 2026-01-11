@@ -1,5 +1,6 @@
 #include "gaussian_quadrature.hpp"
 #include <vector>
+#include <memory>
 #include <cmath>
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
@@ -66,6 +67,10 @@ std::vector<double> GaussianQuadrature::getNodes(size_t n_intervals) const {
 double GaussianQuadrature::getScalingFactor(size_t n_intervals, double a, double b) const {
     (void)n_intervals; // Unused parameter (hide warning)
     return (b - a) / 2.0;
+}
+
+std::unique_ptr<IntegrationStrategy> GaussianQuadrature::clone() const {
+    return std::unique_ptr<GaussianQuadrature>(new GaussianQuadrature{*this});
 }
 
 } // namespace SciCpp
