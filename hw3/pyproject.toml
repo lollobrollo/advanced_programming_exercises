@@ -1,0 +1,23 @@
+[build-system]
+requires = ["scikit-build-core", "pybind11"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "scicpp_python"
+version = "0.1.0"
+description = "Python bindings for SciCpp library"
+authors = [
+    { name="Lorenzo Bortolussi", email="lorenzo.bortolussi@studenti.units.it" },
+    { name="Riccardo Riccio", email="riccardo.riccio@studenti.units.it" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "numpy",
+    "scipy"
+]
+
+[tool.scikit-build]
+cmake.version = ">=3.10"
+cmake.build-type = "Release"
+wheel.packages = ["python/scicpp_python"]

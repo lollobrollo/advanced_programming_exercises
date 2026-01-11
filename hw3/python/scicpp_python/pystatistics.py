@@ -1,8 +1,8 @@
-import scicpp
+from . import scicpp
 import math
 import numpy as np
 from scipy import stats
-from statisticsanalyzer import StatisticsAnalyzer
+from .statisticsanalyzer import StatisticsAnalyzer
 
 class PyStatistics(StatisticsAnalyzer):
     """ Equivalent implementation of scicpp in python """

@@ -1,5 +1,5 @@
 import unittest
-from integration import IntegralEvaluator
+from scicpp_python.integration import IntegralEvaluator
 
 class TestIntegration(unittest.TestCase):
     """ 

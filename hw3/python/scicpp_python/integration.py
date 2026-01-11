@@ -1,5 +1,5 @@
 # make sure that scipi folder is available at PYTHONPATH
-import scicpp
+from . import scicpp
 
 class IntegralEvaluator():
     """

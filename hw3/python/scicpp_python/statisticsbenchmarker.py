@@ -1,5 +1,5 @@
-from benchmarker import Benchmarker
-from statisticsanalyzer import StatisticsAnalyzer
+from .benchmarker import Benchmarker
+from .statisticsanalyzer import StatisticsAnalyzer
 
 class StatisticsBenchmarker(Benchmarker):
     """

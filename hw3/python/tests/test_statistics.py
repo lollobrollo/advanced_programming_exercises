@@ -1,8 +1,8 @@
 import unittest
 import math
-import scicpp
-from cppstatistics import CppStatistics
-from pystatistics import PyStatistics
+import scicpp_python.scicpp as scicpp
+from scicpp_python.cppstatistics import CppStatistics
+from scicpp_python.pystatistics import PyStatistics
 
 # dummy dataset for testing
 def create_test_csv(filename, rows=9):

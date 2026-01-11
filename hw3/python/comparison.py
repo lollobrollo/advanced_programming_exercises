@@ -1,10 +1,10 @@
-import scicpp # shared library built with pybind11
+import scicpp_python.scicpp as scicpp
 import os
 import math
-from statisticsbenchmarker import StatisticsBenchmarker
-from pystatistics import PyStatistics, SciPyStatistics
-from cppstatistics import CppStatistics
-from integration import IntegralEvaluator
+from scicpp_python.statisticsbenchmarker import StatisticsBenchmarker
+from scicpp_python.pystatistics import PyStatistics, SciPyStatistics
+from scicpp_python.cppstatistics import CppStatistics
+from scicpp_python.integration import IntegralEvaluator
 
 # dummy dataset for testing
 def create_test_csv(filename, rows=1000000):

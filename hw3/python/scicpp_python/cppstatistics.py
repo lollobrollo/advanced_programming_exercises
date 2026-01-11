@@ -1,5 +1,5 @@
-import scicpp
-from statisticsanalyzer import StatisticsAnalyzer
+from . import scicpp
+from .statisticsanalyzer import StatisticsAnalyzer
 
 class CppStatistics(StatisticsAnalyzer):
     """ Wrapper of the statistical analyzer provided by scicpp """

@@ -13,13 +13,13 @@ In this section, contributors and respective main contributions are listed.
 - First version of python files: modules.py (C++ functionalities into Python classes) and comparison.py (performance analysis and results accuracy);
 - After code revision, added another version of the statistical analyzer (using numpy and scipy);
 
-
 ### Riccardo Riccio, riccardo.riccio@studenti.units.it:
 - Revision of the bindings, corrected unique_ptr handling;
 - Revision of CMakeLists.txt, now allows for installation of the library in *python* dir;
 - Restructuring of python code to exploit polymorphism;
 - Profiling of statistical methods using py-spy;
-
+- Packaging of the python module for installation via pip;
+- Tinkering with build types to improve performance of the C++ code;
 
 ## PROJECT SETUP
 ### Prerequisites:
@@ -36,10 +36,15 @@ To build the shared library, run the following commands from the root of the pro
 ```bash
 cmake -S. -Bbuild
 cmake --build build
-cmake --install build
 ```
 
-Tests for the C++ code have been implemented in homework 2. The testing suite was extended to cover the new python bindings. To run the tests, after building the project, navigate to the *python* folder and run: 
+It is possible to build and install a python package, to do so run the following:
+
+```bash
+pip install .
+```
+
+Tests for the C++ code have been implemented in homework 2. The testing suite was extended to cover the new python bindings. To run the tests, after installing the package, navigate to the *python* folder and run: 
 
 ```
 python3 -m unittest discover -s tests
@@ -174,6 +179,32 @@ The results confirmed our previous assumptions: most of the time (~53%) is used 
 
 We also noticed that a significant amount of time (~4%) is used to get the column data from the cpp implementation of dataset into its python representation so we decided to pre-fetch required columns at initialization to avoid the overhead from affecting the performance measurements in the Benchmarker class.
 
-Finally, the actual statistical methods take up only a small portion of the total execution time, the most expensive one being the median, since it requires sorting the data, and the correlation, due to multiple passes over the data. For both we can see that the C++ implementation is a bit faster than the python one.
+The actual statistical methods take up only a small portion of the total execution time, the most expensive one being the median, since it requires sorting the data, and the correlation, due to multiple passes over the data. For both we can see that the C++ implementation is a bit faster than the python one.
 
 ![Flamegraph](profile.svg)
+
+Finally, a note that using build type Release for the C++ builds yields far better performance as optimizations are enabled by the compiler.
+
+Results with optimizations enabled (Release build) against the basic python implementation:
+
+```
+Metric: MEAN
+  C++:     0.000000 | Time: 0.002380s
+  Python:     0.000000 | Time: 0.004690s
+  Speedup: 1.97x faster using C++
+
+Metric: MEDIAN
+  C++:     0.000003 | Time: 0.007825s
+  Python:     0.000003 | Time: 0.058725s
+  Speedup: 7.50x faster using C++
+
+Metric: VARIANCE
+  C++:     0.500001 | Time: 0.002746s
+  Python:     0.500001 | Time: 0.035681s
+  Speedup: 13.00x faster using C++
+
+Metric: CORRELATION
+  C++:     1.000000 | Time: 0.005060s
+  Python:     1.000000 | Time: 0.104229s
+  Speedup: 20.60x faster using C++
+```

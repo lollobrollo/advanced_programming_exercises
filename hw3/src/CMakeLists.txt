@@ -19,5 +19,5 @@ target_include_directories(scicpp PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 # link external libraries
 target_link_libraries(scicpp PRIVATE muparserx Eigen3::Eigen)
 
-# install pybind11 module in the ../python directory
-install(TARGETS scicpp DESTINATION ${CMAKE_SOURCE_DIR}/python)
+# install pybind11 module in the python/scicpp_python directory
+install(TARGETS scicpp DESTINATION ${CMAKE_SOURCE_DIR}/python/scicpp_python)
