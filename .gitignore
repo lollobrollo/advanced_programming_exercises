@@ -4,3 +4,8 @@
 **/Makefile
 **/CMakeFiles/
 **/build/
+
+# Getpot original files
+**/getpot-c++/
+
+old_exams
